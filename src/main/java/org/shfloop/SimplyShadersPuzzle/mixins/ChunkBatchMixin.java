@@ -1,8 +1,8 @@
 package org.shfloop.SimplyShadersPuzzle.mixins;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.llamalad7.mixinextras.sugar.Local;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
+import com.llamalad7.mixinextras.sugar.Local;
 import finalforeach.cosmicreach.rendering.ChunkBatch;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,8 +17,8 @@ public class ChunkBatchMixin {
     private void shadowInject(CallbackInfo ci, @Local Camera worldCamera) { // just gonna have a exit early for shadow chunk not sure how i can easily implement a shadow pass vert and frag shader to work with transparent blocks
         //loses about 50fps
         if (Shadows.shadowPass) {
-            if (lastBoundShader != GameShaderInterface.getShader().get(6)) { //SUPER UGLY BUT IDK
-                lastBoundShader = GameShaderInterface.getShader().get(6);
+            if (lastBoundShader !=Shadows.SHADOW_CHUNK){ //SUPER UGLY BUT IDK
+                lastBoundShader = Shadows.SHADOW_CHUNK;
                 //Todo maybe make sure these get added to the array last and just dynamically get the position so future shaders added bu the game dont break the mod
 
                 lastBoundShader.bind(worldCamera); // who knowws if this is going to work cause i sure dont // i could just make this perminent sun_camera

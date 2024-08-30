@@ -1,6 +1,7 @@
 package org.shfloop.SimplyShadersPuzzle;
 
 import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.files.FileHandle;
 import finalforeach.cosmicreach.GameAssetLoader;
 import finalforeach.cosmicreach.io.SaveLocation;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.util.Collections;
 
 
 public class ShaderGenerator {
@@ -85,11 +87,12 @@ public class ShaderGenerator {
 
     }
 
+
     static void copyShaderFromZip(String shaderName) throws IOException {
         Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), currentShaderPackFolder);
         try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
             Path source = fs.getPath("/" +shaderName);
-
+            Files.readString(source);
             Path target = Paths.get(SaveLocation.getSaveFolderLocation(), "/mods/assets/shaders/InternalShader/internal." + shaderName);
             Files.copy(source,target);
         }

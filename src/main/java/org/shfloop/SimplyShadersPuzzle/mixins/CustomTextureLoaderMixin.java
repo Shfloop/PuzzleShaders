@@ -15,7 +15,7 @@ public class CustomTextureLoaderMixin {
     @Inject(method = "setNormal", at = @At("TAIL"))
     private  static void overwriteNormal(CallbackInfo ci, @Local Vector3 tmpNormal) {
 
-        //tmpNormal.set(Shadows.tmpNormalVec);
+        tmpNormal.set(Shadows.tmpNormalVec);
 
     }
 
