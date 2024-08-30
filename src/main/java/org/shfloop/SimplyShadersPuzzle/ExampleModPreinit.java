@@ -1,4 +1,4 @@
-package org.example.exmod;
+package org.shfloop.SimplyShadersPuzzle;
 
 import com.github.puzzle.loader.entrypoint.interfaces.PreModInitializer;
 

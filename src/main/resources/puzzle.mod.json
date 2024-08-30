@@ -4,25 +4,25 @@
   "name": "${mod_name}",
   "description": "${mod_desc}",
   "authors": [
-    "YOU :D"
+    "Shfloop"
   ],
   "meta": {
     "icon": "assets/example-mod/icons/icon.png"
   },
   "entrypoints": {
     "preInit": [
-      "org.example.exmod.ExampleModPreinit"
+      "org.shfloop.SimplyShadersPuzzle.ExampleModPreinit"
     ],
     "init": [
-      "org.example.exmod.ExampleMod"
+      "org.shfloop.SimplyShadersPuzzle.SimplyShaders"
     ]
   },
   "mixins": [
     "example.mixins.json"
   ],
   "dependencies": {
-    "cosmic-reach": ">=0.1.44",
-    "puzzle-loader": ">=1.1.0"
+    "cosmic-reach": ">=0.1.47",
+    "puzzle-loader": ">=1.4.0"
   },
   "accessManipulator": "example_mod.manipulator"
 }

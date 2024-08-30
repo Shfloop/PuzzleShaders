@@ -1,10 +1,24 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "org.example.exmod.mixins",
+  "package": "org.shfloop.SimplyShadersPuzzle.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MainMenuMixin"
+    "MainMenuMixin",
+    "OptionsMenuMixin",
+    "ChunkShaderMixin",
+
+
+    "GameShaderMixin",
+    "GameShaderInterface",
+    "InGameMixin",
+    "ChunkBatchMixin",
+    "BlockGameMixin",
+    "EntityModelInstanceMixin",
+    "EntityModelInterface",
+    "SkyMixin",
+    "PuzzleBlockModelCuboidMixin",
+    "CustomTextureLoaderMixin"
   ],
   "client": [],
   "server": [],

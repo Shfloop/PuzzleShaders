@@ -1,4 +1,4 @@
-package org.example.exmod.commands;
+package org.shfloop.SimplyShadersPuzzle.commands;
 
 import com.github.puzzle.game.commands.CommandManager;
 import com.github.puzzle.game.commands.PuzzleCommandSource;

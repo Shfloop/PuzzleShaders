@@ -1,8 +1,8 @@
-package org.example.exmod.mixins;
+package org.shfloop.SimplyShadersPuzzle.mixins;
 
 import finalforeach.cosmicreach.gamestates.MainMenu;
 import finalforeach.cosmicreach.ui.UIElement;
-import org.example.exmod.Constants;
+import org.shfloop.SimplyShadersPuzzle.Constants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
