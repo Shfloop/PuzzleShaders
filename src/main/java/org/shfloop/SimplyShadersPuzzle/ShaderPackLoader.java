@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.github.puzzle.core.resources.ResourceLocation;
+import finalforeach.cosmicreach.world.Sky;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import finalforeach.cosmicreach.GameAssetLoader;
@@ -54,6 +55,7 @@ public class ShaderPackLoader {
         }
         //remesh?
         remeshAllRegions();
+        remeashAllSkies();
 
     }
     public static void switchToDefaultPack() {
@@ -77,6 +79,13 @@ public class ShaderPackLoader {
             }
 
         }
+    }
+    public static void remeashAllSkies() {
+        for (Sky sky: Sky.skyChoices) {
+            sky.starMesh = null;
+        }
+        DynamicSkyRewrite temp =   (DynamicSkyRewrite) Sky.skyChoices.get(2);
+        temp.reMesh();
     }
 
     //not sure what it does if i call .split so it might eb better
