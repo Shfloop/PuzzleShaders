@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
+import com.github.puzzle.core.resources.ResourceLocation;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import finalforeach.cosmicreach.GameAssetLoader;
@@ -120,13 +121,23 @@ public class ShaderPackLoader {
                 return GameAssetLoader.ALL_ASSETS.get(fileName).readString().split("\n");
             }
             //this only needs to load final.frag/final.vert
+
             FileHandle handle = Gdx.files.classpath("baseShaders/" + fileName); //classpath just does resourceasStram
             System.out.println(handle.path());
             if (handle.exists()) { //could just look for default shader as well
                 System.out.println(" from resources");
                 GameAssetLoader.ALL_ASSETS.put(fileName, handle);
                 return handle.readString().split("\n");
-            } else {
+            } // FIXME this is super hacky in puzzle and ruins a lot of what they are doing
+            else if (fileName.contains(":")) {
+                //means its a puzzle shader
+                System.out.println("PUZZLE SHADER DETECTED: " + fileName);
+                ResourceLocation loc =  ResourceLocation.fromString( fileName);
+                loc.name = "shaders/" + loc.name;
+                FileHandle puzzlehandle = loc.locate();
+                return puzzlehandle.readString().split("\n");
+            }
+            else {
                 System.out.println(" from jar");
                 FileHandle fileFromJar = Gdx.files.internal("shaders/" + fileName);
                 GameAssetLoader.ALL_ASSETS.put(fileName, fileFromJar);

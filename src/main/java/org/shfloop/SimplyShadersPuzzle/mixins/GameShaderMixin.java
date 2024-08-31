@@ -3,6 +3,7 @@ package org.shfloop.SimplyShadersPuzzle.mixins;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.github.puzzle.core.resources.ResourceLocation;
 import org.shfloop.SimplyShadersPuzzle.ShaderPackLoader;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
@@ -125,7 +126,10 @@ public abstract class GameShaderMixin   {
         String[] rawShaderLines = ShaderPackLoader.loadShader( shaderName);
         StringBuilder sb = new StringBuilder();
         String version = "";
-        String define = shaderName.replaceAll("[-/. ()]", "_");
+        //Puzzle difference
+        ResourceLocation id = ResourceLocation.fromString(shaderName);
+
+        String define = id.name.replaceAll("[-/. ()]", "_");
         sb.append("#ifndef " + define + "\n");
         sb.append("#define " + define + "\n");
         boolean foundDrawBuffer = false;

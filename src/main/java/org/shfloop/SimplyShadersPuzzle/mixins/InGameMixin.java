@@ -61,7 +61,9 @@ public abstract class InGameMixin extends GameState {
     @Inject(method = "loadWorld(Lfinalforeach/cosmicreach/world/World;)V", at =@At("TAIL"))
     private void injectloadWorld(CallbackInfo ci) {
 
-
+        if (SimplyShaders.screenQuad == null) {
+            SimplyShaders.genMesh();
+        }
 
         if (SimplyShaders.buffer!= null) { //move this shit to loadWorld
             SimplyShaders.buffer.dispose(); // it should already be disposed but just to be sure

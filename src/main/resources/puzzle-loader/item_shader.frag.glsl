@@ -1,5 +1,5 @@
 #version 150
-#ifdef GL_ES 
+#ifdef GL_ES
 precision mediump float;
 #endif
 
@@ -10,7 +10,7 @@ uniform vec4 tintColor;
 
 out vec4 outColor;
 
-void main() 
+void main()
 {
     vec4 texColor = texture(texDiffuse, v_texCoord0);
 

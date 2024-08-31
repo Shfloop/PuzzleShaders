@@ -28,7 +28,7 @@ import java.io.IOException;
 
 public class SimplyShaders implements ModInitializer {
     public static RenderFBO buffer ; //this might be a good way to go about this but im not really sure
-    public static Mesh screenQuad;
+    public static Mesh screenQuad = null;
     public static boolean inRender = false;
     @Override
     public void onInit() {
@@ -38,15 +38,37 @@ public class SimplyShaders implements ModInitializer {
 
         Command.registerCommand(CommandTime::new, "time");
         Commands.register();
-        Command.registerCommand(CommandTime::new, "time");
+
         //System.out.println("IS IT RUNNING GL30" + Gdx.graphics.isGL30Available());
         //fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         // buildFBO(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        try {
+//            buffer = new RenderFBO(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+    }
+
+    @Subscribe
+    public void onEvent(OnRegisterBlockEvent event) {
+
+    }
+
+
+
+    @Subscribe
+    public void onEvent(OnPreLoadAssetsEvent event) {
+        ILanguageFile lang = null;
         try {
-            buffer = new RenderFBO(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        } catch (Exception e) {
+            lang = LanguageFileVersion1.loadLanguageFromString(new ResourceLocation(Constants.MOD_ID, "languages/en-US.json").locate().readString());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        LanguageManager.registerLanguageFile(lang);
+    }
+    public static void genMesh() {
         float[] verts = new float[20];
         int i = 0;
 
@@ -79,25 +101,6 @@ public class SimplyShaders implements ModInitializer {
                 new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
         screenQuad.setVertices(verts);
 
-
-    }
-
-    @Subscribe
-    public void onEvent(OnRegisterBlockEvent event) {
-
-    }
-
-
-
-    @Subscribe
-    public void onEvent(OnPreLoadAssetsEvent event) {
-        ILanguageFile lang = null;
-        try {
-            lang = LanguageFileVersion1.loadLanguageFromString(new ResourceLocation(Constants.MOD_ID, "languages/en-US.json").locate().readString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        LanguageManager.registerLanguageFile(lang);
     }
 
     public static void resize(){
