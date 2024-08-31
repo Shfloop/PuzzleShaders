@@ -190,7 +190,7 @@ public class ShaderSelectionMenu extends GameState{
 //                        Shadows.calcSunDirection();
 //                    }
 //
-//                    System.out.println("SUN DIRECTION " + Shadows.getCamera().direction);
+//                   Constants.LOGGER.info("SUN DIRECTION " + Shadows.getCamera().direction);
 //                    this.updateText();
 //                }
 //

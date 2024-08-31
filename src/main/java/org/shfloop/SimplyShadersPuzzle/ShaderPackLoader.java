@@ -96,14 +96,14 @@ public class ShaderPackLoader {
             if (!isZipPack) { // load from regular gdx file absolute
                 //cant use load asset caues it will add it to the all assets which would interfere with getting vanillal stuff
               FileHandle unzippedFile = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + fileName);
-                System.out.println(unzippedFile);
+                //System.out.println(unzippedFile);
               return unzippedFile.readString().split("\n");
             } else {
                 //TODO replace with program
                 Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), "/mods/assets/shaders/" + selectedPack);
                 try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
                     Path path = fs.getPath( fileName);
-                        System.out.println(path);
+                        //System.out.println(path);
                     return Files.readString(path).split("\n");
                 } catch (InvalidPathException e) {
                     //crash for now but FIXME
@@ -123,22 +123,22 @@ public class ShaderPackLoader {
             //this only needs to load final.frag/final.vert
 
             FileHandle handle = Gdx.files.classpath("baseShaders/" + fileName); //classpath just does resourceasStram
-            System.out.println(handle.path());
+            //System.out.println(handle.path());
             if (handle.exists()) { //could just look for default shader as well
-                System.out.println(" from resources");
+               Constants.LOGGER.info(" from resources");
                 GameAssetLoader.ALL_ASSETS.put(fileName, handle);
                 return handle.readString().split("\n");
-            } // FIXME this is super hacky in puzzle and ruins a lot of what they are doing
+            } // FIXME this is super hacky in puzzle
             else if (fileName.contains(":")) {
                 //means its a puzzle shader
-                System.out.println("PUZZLE SHADER DETECTED: " + fileName);
+               Constants.LOGGER.info("PUZZLE SHADER DETECTED: " + fileName);
                 ResourceLocation loc =  ResourceLocation.fromString( fileName);
                 loc.name = "shaders/" + loc.name;
                 FileHandle puzzlehandle = loc.locate();
                 return puzzlehandle.readString().split("\n");
             }
             else {
-                System.out.println(" from jar");
+               Constants.LOGGER.info(" from jar");
                 FileHandle fileFromJar = Gdx.files.internal("shaders/" + fileName);
                 GameAssetLoader.ALL_ASSETS.put(fileName, fileFromJar);
                 return fileFromJar.readString().split("\n");
@@ -233,7 +233,7 @@ public class ShaderPackLoader {
         } else {
             for (int i = 0; i < 8; i++ ) {
                 String compositeName = "composite" + i;
-                System.out.println(compositeName);
+               Constants.LOGGER.info(compositeName);
                 FileHandle compositeTest = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + compositeName + ".frag.glsl");
 
                 if (compositeTest.exists()) {

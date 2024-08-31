@@ -16,7 +16,7 @@ public class ShadowTexture  { //look into using GLTexture
         if (this.id == -1) {
             throw new Exception("Shadow map doesnt exits cant get id");
         }
-        // System.out.println("SHADOWMAP LOCATION " + this.id);
+        //Constants.LOGGER.info("SHADOWMAP LOCATION " + this.id);
         this.width = width;
         this.height = height;
 

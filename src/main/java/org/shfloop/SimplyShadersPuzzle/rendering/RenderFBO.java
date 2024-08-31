@@ -1,6 +1,7 @@
 package org.shfloop.SimplyShadersPuzzle.rendering;
 
 import com.badlogic.gdx.Gdx;
+import org.shfloop.SimplyShadersPuzzle.Constants;
 import org.shfloop.SimplyShadersPuzzle.ShadowTexture;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
@@ -23,7 +24,7 @@ public class RenderFBO {
 
         this.WIDTH = width;
         this.HEIGHT = height;
-        System.out.println("Creating RenderBuffer");
+       Constants.LOGGER.info("Creating RenderBuffer");
         renderTextures = new BufferTexture[8];
         fboHandle = Gdx.gl.glGenFramebuffer();
 
@@ -53,7 +54,7 @@ public class RenderFBO {
 
 //        fboTexture = new TextureRegion(fbo.getColorBufferTexture());
         Gdx.gl.glBindFramebuffer(36160, 0);
-        System.out.println("RenderBufferDone");
+       Constants.LOGGER.info("RenderBufferDone");
     }
     public int getFboHandle() {
         return fboHandle;

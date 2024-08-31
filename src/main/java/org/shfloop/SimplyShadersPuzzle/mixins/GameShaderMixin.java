@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.github.puzzle.core.resources.ResourceLocation;
+import org.shfloop.SimplyShadersPuzzle.Constants;
 import org.shfloop.SimplyShadersPuzzle.ShaderPackLoader;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
@@ -46,7 +47,7 @@ public abstract class GameShaderMixin   {
     }
     @Overwrite
     public static void reloadAllShaders() {
-        System.out.println("Reloading all Shaders");
+       Constants.LOGGER.info("Reloading all Shaders");
         if (ShaderPackLoader.shaderPackOn) {
             for (GameShader shader: ShaderPackLoader.shader1) {
                 shader.reload();
@@ -56,7 +57,7 @@ public abstract class GameShaderMixin   {
                 shader.reload();
             }
         }
-        System.out.println("Reloaded all Shaders");
+       Constants.LOGGER.info("Reloaded all Shaders");
     }
 
     @Inject(method = "bind", at = @At("TAIL"))
@@ -94,7 +95,7 @@ public abstract class GameShaderMixin   {
         tempThis.validateShader(this.vertexShaderFileName, vert, this.fragShaderFileName, frag);
         ShaderProgram.pedantic = true;
         tempThis.shader = new ShaderProgram(vert, frag);
-        System.out.println("Compiling shader(" + this.vertexShaderFileName + ", " + this.fragShaderFileName + ")...");
+       Constants.LOGGER.info("Compiling shader(" + this.vertexShaderFileName + ", " + this.fragShaderFileName + ")...");
         if (!tempThis.shader.isCompiled()) {
             String log = tempThis.shader.getLog();
             throw new RuntimeException(this.getClass().getSimpleName() + " is not compiled!\n" + log);
@@ -102,13 +103,13 @@ public abstract class GameShaderMixin   {
             for(String u : tempThis.shader.getUniforms()) {
                 if (u.contains(".")) {
                     int blockIndex = GL32.glGetUniformBlockIndex(tempThis.shader.getHandle(), u.split("\\.")[0]);
-                    System.out.println("Loaded uniform: " + tempThis.getUniformTypeName(u) + " " + u + " at location=" + blockIndex);
+                   Constants.LOGGER.info("Loaded uniform: " + tempThis.getUniformTypeName(u) + " " + u + " at location=" + blockIndex);
                 } else {
-                    System.out.println("Loaded uniform: " + tempThis.getUniformTypeName(u) + " " + u + " at location=" + tempThis.shader.getUniformLocation(u));
+                   Constants.LOGGER.info("Loaded uniform: " + tempThis.getUniformTypeName(u) + " " + u + " at location=" + tempThis.shader.getUniformLocation(u));
                 }
             }
 
-            System.out.println(tempThis.shader.getLog());
+           Constants.LOGGER.info(tempThis.shader.getLog());
             if (RuntimeInfo.isMac) {
                 ShaderProgram.prependVertexCode = GameShader.macOSPrependVertVer;
                 ShaderProgram.prependFragmentCode = GameShader.macOSPrependFragVer;
@@ -160,7 +161,7 @@ public abstract class GameShaderMixin   {
         //only want to apply drawbuffer if its a frag shader
         if (!foundDrawBuffer && shaderType.ordinal() == 0) {
             shaderDrawBuffers = new int[] {GL32.GL_COLOR_ATTACHMENT0}; //default
-            System.out.println("Default drawBuffer main");
+           Constants.LOGGER.info("Default drawBuffer main");
         }
 
         sb.append("#endif //" + define + "\n");
@@ -206,7 +207,7 @@ public abstract class GameShaderMixin   {
                 System.out.print(tempdrawBuffers[i] - 48 + ", ");
                 //copy over the data with a new sized array and the appropriate colorattachment value
             }
-            System.out.println("}");
+           Constants.LOGGER.info("}");
 
             return true;
         }

@@ -86,7 +86,7 @@ public class Shadows {
         }
     }
     public static void turnShadowsOn()  {
-        System.out.println("Turning Shaders On");
+       Constants.LOGGER.info("Turning Shaders On");
 
 //        try {
 //           // copyExternalShaderFiles(); instead of copying files we just wantt oreplace all default static shaders and make an array for the current one
@@ -94,7 +94,7 @@ public class Shadows {
 //           cleanup();
 //            e.printStackTrace();
 //            System.out.print("ERROR   ");
-//            System.out.println(e);
+//           Constants.LOGGER.info(e);
 //            Shadows.shaders_on = false;
 //            initalized = false;
 //            return;
@@ -109,14 +109,14 @@ public class Shadows {
 //        ShaderGenerator.copyShader("shadowEntity.frag.glsl");
 //        ShaderGenerator.copyShader("shadowEntity.vert.glsl");
         //TODO add other shaders
-        System.out.println("creating Shadow map");
+       Constants.LOGGER.info("creating Shadow map");
         try { shadow_map= new ShadowMap();}
         catch (Exception e){
             cleanup();
             e.printStackTrace();
             System.out.print("ERROR   ");
 
-            System.out.println(e);
+           Constants.LOGGER.info(e);
             Shadows.shaders_on = false;
             initalized = false;
             return;
@@ -132,13 +132,13 @@ public class Shadows {
 //        } else {
 //            Sky.skyChoices.set(2, new DynamicSkyRewrite("Dynamic_Sky"));
 //        }
-        System.out.println("Finished Loading Shaders");
+       Constants.LOGGER.info("Finished Loading Shaders");
         //after shaders are loaded bind the render textures
         if (SimplyShaders.buffer != null) {
             //RenderFBO.bindRenderTextures();
 
         } else {
-            System.out.println("Render Textures NOT BOUND");
+           Constants.LOGGER.info("Render Textures NOT BOUND");
 
         }
 
@@ -147,8 +147,8 @@ public class Shadows {
 
     private static void copyExternalShaderFiles() throws IOException {
 
-        System.out.println("SAVE LOCATION " + SaveLocation.getSaveFolderLocation());
-        System.out.println("Copying shaders from: " + SaveLocation.getSaveFolderLocation() + ShaderGenerator.currentShaderPackFolder);
+       Constants.LOGGER.info("SAVE LOCATION " + SaveLocation.getSaveFolderLocation());
+       Constants.LOGGER.info("Copying shaders from: " + SaveLocation.getSaveFolderLocation() + ShaderGenerator.currentShaderPackFolder);
         if (ShaderGenerator.currentShaderPackFolder.endsWith("zip/")) {// i add a / at the end when setting currentshaderpackFolder
             for (String s : SHADERS_TO_COPY) {
                 ShaderGenerator.copyShaderFromZip(s); //FIXME need to remove
@@ -216,7 +216,7 @@ public class Shadows {
     // for shader files all i need to do is switch the default static shaders for each shader type
     public static void cleanup()  {
         //if copy base shaders fails the game need to stop for good isnt much i can doi to recover
-        System.out.println("Turning Shaders OFF");
+       Constants.LOGGER.info("Turning Shaders OFF");
 //        ShaderGenerator.copyBaseShader("chunk.frag.glsl"); //may want shadows to just have a shadergenerator object instead of having both be static
 //        ShaderGenerator.copyBaseShader("chunk.vert.glsl");
 //

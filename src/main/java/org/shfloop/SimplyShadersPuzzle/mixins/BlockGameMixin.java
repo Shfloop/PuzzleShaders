@@ -1,6 +1,7 @@
 package org.shfloop.SimplyShadersPuzzle.mixins;
 
 import com.badlogic.gdx.Gdx;
+import org.shfloop.SimplyShadersPuzzle.Constants;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
@@ -31,7 +32,7 @@ public abstract class BlockGameMixin {
                     needsResize = false;
                     SimplyShaders.resize();
                 } else {
-                    System.out.println("STOPPPED RESIZE"); // this gets spammed
+                   Constants.LOGGER.info("STOPPPED RESIZE"); // this gets spammed
                     //instead just set needs resized to false cause it should call resize once the window regains focus
                     needsResize = false;
                 }

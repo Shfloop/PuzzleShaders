@@ -105,7 +105,7 @@ public class DynamicSkyRewrite extends Sky {
         if (timeT > lastT + cycleLength / 4000  || Shadows.updateTime){ // i want to update every 2000 of cycle
             Shadows.updateTime = false; // bit weird but it should work
             //System.out.println("UPDATE_TIME " + timeT);
-//            System.out.println("SUN DIRECTION " + this.sunDirection);
+//           Constants.LOGGER.info("SUN DIRECTION " + this.sunDirection);
 
             Shadows.time_of_day =  timeT ; //this doesnt work if the cycle time is changed
             if (Shadows.shaders_on) {

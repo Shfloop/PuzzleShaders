@@ -209,7 +209,7 @@ public abstract class InGameMixin extends GameState {
 
 
         SimplyShaders.inRender = false;// should stop finalshader from from drying to call drawbuffers
-       // System.out.println("Composite done");
+       //Constants.LOGGER.info("Composite done");
 
         //bind framebuffer 0
         Gdx.gl.glBindFramebuffer(GL32.GL_FRAMEBUFFER, 0);
