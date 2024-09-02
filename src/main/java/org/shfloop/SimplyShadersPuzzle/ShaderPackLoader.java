@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.github.puzzle.core.resources.ResourceLocation;
 import finalforeach.cosmicreach.world.*;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
+import org.shfloop.SimplyShadersPuzzle.mixins.SkyInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import finalforeach.cosmicreach.GameAssetLoader;
 import finalforeach.cosmicreach.gamestates.InGame;
@@ -77,8 +78,10 @@ public class ShaderPackLoader {
         for (Sky sky: Sky.skyChoices) {
             sky.starMesh = null;
         }
+        Sky.skyChoices.set(0, new DynamicSky("base:dynamic_sky", "Dynamic_Sky"));
         DynamicSky temp =   (DynamicSky) Sky.skyChoices.get(0);
-        temp.starMesh = null;
+        Sky.currentSky = temp;
+        SkyInterface.getSkies().put("base:dynamic_sky", temp);
     }
 
     //not sure what it does if i call .split so it might eb better

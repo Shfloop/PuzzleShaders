@@ -14,7 +14,8 @@
     "BlockGameMixin",
     "EntityModelInstanceMixin",
     "EntityModelInterface",
-    "DynamicSkyMixin"
+    "DynamicSkyMixin",
+    "SkyInterface"
 
   ],
   "client": [],
