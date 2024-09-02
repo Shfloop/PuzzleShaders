@@ -17,8 +17,6 @@ import com.github.puzzle.game.events.OnRegisterBlockEvent;
 
 import com.github.puzzle.loader.entrypoint.interfaces.ModInitializer;
 
-import finalforeach.cosmicreach.chat.commands.Command;
-import org.shfloop.SimplyShadersPuzzle.commands.CommandTime;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
@@ -33,19 +31,6 @@ public class SimplyShaders implements ModInitializer {
     public void onInit() {
         PuzzleRegistries.EVENT_BUS.register(this);
 
-        //Constants.LOGGER.info("Hello From INIT");
-
-        Command.registerCommand(CommandTime::new, "time");
-
-
-        //System.out.println("IS IT RUNNING GL30" + Gdx.graphics.isGL30Available());
-        //fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-        // buildFBO(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        try {
-//            buffer = new RenderFBO(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
 
 
     }
@@ -113,7 +98,7 @@ public class SimplyShaders implements ModInitializer {
         }
 
     }
-    public static enum newShaderType {
+    public  enum newShaderType {
         FRAG,
         VERT,
         IMPORTED

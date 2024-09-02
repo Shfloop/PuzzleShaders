@@ -2,25 +2,18 @@ package org.shfloop.SimplyShadersPuzzle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.github.puzzle.core.resources.ResourceLocation;
-import finalforeach.cosmicreach.world.Sky;
+import finalforeach.cosmicreach.world.*;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import finalforeach.cosmicreach.GameAssetLoader;
 import finalforeach.cosmicreach.gamestates.InGame;
 import finalforeach.cosmicreach.io.SaveLocation;
 import finalforeach.cosmicreach.rendering.shaders.*;
-import finalforeach.cosmicreach.world.Chunk;
-import finalforeach.cosmicreach.world.Region;
-import finalforeach.cosmicreach.world.Zone;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
-import java.util.Scanner;
 
 public class ShaderPackLoader {
     //called from GameShaderMixin to load the shader based off shader selection (loaded from settings)
@@ -84,8 +77,8 @@ public class ShaderPackLoader {
         for (Sky sky: Sky.skyChoices) {
             sky.starMesh = null;
         }
-        DynamicSkyRewrite temp =   (DynamicSkyRewrite) Sky.skyChoices.get(2);
-        temp.reMesh();
+        DynamicSky temp =   (DynamicSky) Sky.skyChoices.get(0);
+        temp.starMesh = null;
     }
 
     //not sure what it does if i call .split so it might eb better

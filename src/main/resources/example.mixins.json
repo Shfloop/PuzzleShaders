@@ -7,8 +7,6 @@
 
     "OptionsMenuMixin",
     "ChunkShaderMixin",
-
-
     "GameShaderMixin",
     "GameShaderInterface",
     "InGameMixin",
@@ -16,9 +14,8 @@
     "BlockGameMixin",
     "EntityModelInstanceMixin",
     "EntityModelInterface",
-    "SkyMixin",
-    "PuzzleBlockModelCuboidMixin",
-    "CustomTextureLoaderMixin"
+    "DynamicSkyMixin"
+
   ],
   "client": [],
   "server": [],
