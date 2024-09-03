@@ -136,7 +136,7 @@ public class ShaderPackLoader {
             } // FIXME this is super hacky in puzzle
             else if (fileName.contains(":")) {
                 //means its a puzzle shader
-               Constants.LOGGER.info("PUZZLE SHADER DETECTED: " + fileName);
+               Constants.LOGGER.info("from puzzle" + fileName);
                 ResourceLocation loc =  ResourceLocation.fromString( fileName);
                 loc.name = "shaders/" + loc.name;
                 FileHandle puzzlehandle = loc.locate();
