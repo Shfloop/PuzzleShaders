@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.github.puzzle.core.resources.ResourceLocation;
+import com.github.puzzle.game.engine.shaders.ItemShader;
 import finalforeach.cosmicreach.world.*;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
 import org.shfloop.SimplyShadersPuzzle.mixins.SkyInterface;
@@ -26,8 +27,6 @@ public class ShaderPackLoader {
     public static String selectedPack;
     public static boolean isZipPack = false;
     public static Array<GameShader> shader1;
-    public static Array<GameShader> shader2;
-    private static boolean useArray2 = false;
 
 
     //also want this to init the shaders
@@ -55,7 +54,6 @@ public class ShaderPackLoader {
     public static void switchToDefaultPack() {
         shaderPackOn = false;
         isZipPack = false;
-        useArray2 = false;
         setDefaultShaders();
         remeshAllRegions();
         //remesh
@@ -82,6 +80,9 @@ public class ShaderPackLoader {
         DynamicSky temp =   (DynamicSky) Sky.skyChoices.get(0);
         Sky.currentSky = temp;
         SkyInterface.getSkies().put("base:dynamic_sky", temp);
+    }
+    public static void updateItemShader() {
+
     }
 
     //not sure what it does if i call .split so it might eb better
@@ -170,6 +171,7 @@ public class ShaderPackLoader {
         EntityShader.ENTITY_SHADER = (EntityShader) allShaders.get(4);
         //for now dont f with death screen (5)
         FinalShader.DEFAULT_FINAL_SHADER = (FinalShader) allShaders.get(6);
+        ItemShader.DEFAULT_ITEM_SHADER = (ItemShader) allShaders.get(7);
     }
 
     //create the new array based onthe shaderpack folder
@@ -199,12 +201,13 @@ public class ShaderPackLoader {
         EntityShader.ENTITY_SHADER =  new EntityShader("entity.vert.glsl", "entity.frag.glsl");
         packShaders.add(allShaders.pop());
 
-        packShaders.add(allShaders.get(5)); //TODO
+        packShaders.add(allShaders.get(5)); //TODO (death Screen)
 
         FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader("final.vert.glsl", "final.frag.glsl",  false);
         packShaders.add(allShaders.pop());
 
-        //add the rest from the pack  shadow , shadowentity, ? composite0-8 as many as given
+        ItemShader.DEFAULT_ITEM_SHADER = new ItemShader("item_shader.vert.glsl", "item_shader.frag.glsl");
+        packShaders.add(allShaders.pop());
 
 
         Shadows.SHADOW_CHUNK = new ChunkShader("shadowChunk.vert.glsl", "shadowChunk.frag.glsl");
