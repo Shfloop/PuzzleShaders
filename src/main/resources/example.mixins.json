@@ -16,7 +16,11 @@
     "EntityModelInterface",
     "DynamicSkyMixin",
     "SkyInterface",
-    "CommandTimeMixin"
+    "CommandTimeMixin",
+    "ItemModelBlockMixin",
+    "ItemModel2DMixin",
+    "ExperimentalItemModelMixin",
+    "ItemThingModelMixin"
 
   ],
   "client": [],
