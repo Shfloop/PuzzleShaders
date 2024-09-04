@@ -171,7 +171,8 @@ public class ShaderPackLoader {
         EntityShader.ENTITY_SHADER = (EntityShader) allShaders.get(4);
         //for now dont f with death screen (5)
         FinalShader.DEFAULT_FINAL_SHADER = (FinalShader) allShaders.get(6);
-        ItemShader.DEFAULT_ITEM_SHADER = (ItemShader) allShaders.get(7);
+        //TODO Add item SHader back
+        //ItemShader.DEFAULT_ITEM_SHADER = (ItemShader) allShaders.get(7);
     }
 
     //create the new array based onthe shaderpack folder
@@ -205,9 +206,9 @@ public class ShaderPackLoader {
 
         FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader("final.vert.glsl", "final.frag.glsl",  false);
         packShaders.add(allShaders.pop());
-
-        ItemShader.DEFAULT_ITEM_SHADER = new ItemShader("item_shader.vert.glsl", "item_shader.frag.glsl");
-        packShaders.add(allShaders.pop());
+//TODO Add item SHader back
+       // ItemShader.DEFAULT_ITEM_SHADER = new ItemShader("item_shader.vert.glsl", "item_shader.frag.glsl");
+//packShaders.add(allShaders.pop());
 
 
         Shadows.SHADOW_CHUNK = new ChunkShader("shadowChunk.vert.glsl", "shadowChunk.frag.glsl");
