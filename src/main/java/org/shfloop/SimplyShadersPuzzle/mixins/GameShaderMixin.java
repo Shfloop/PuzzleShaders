@@ -35,6 +35,7 @@ public abstract class GameShaderMixin   {
     @Inject(method = "initShaders()V", at = @At("Tail")) // making it head should populate the mods assets with the replacement shaders
     static private void addShadowPassShaders(CallbackInfo ci) {
         FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader("final.vert.glsl", "final.frag.glsl",  false);
+        Shadows.BLOCK_ENTITY_SHADER = ChunkShader.DEFAULT_BLOCK_SHADER;
     }
     @Overwrite
     public static void reloadAllShaders() {
@@ -140,7 +141,7 @@ public abstract class GameShaderMixin   {
                     }
                 }
             } else if (trimmed.startsWith("#import \"") && trimmed.endsWith("\"")) {
-                String importedShaderName = shaderLine.replaceFirst("#import \"", "").replace("\\", "/");
+                String importedShaderName = trimmed.replaceFirst("#import \"", "").replace("\\", "/");
                 importedShaderName = importedShaderName.substring(0, importedShaderName.length() - 1);
                 sb.append(loadShaderFile(importedShaderName, SimplyShaders.newShaderType.IMPORTED) + "\n");
             } else if (trimmed.startsWith("/*") && trimmed.endsWith("*/")) {

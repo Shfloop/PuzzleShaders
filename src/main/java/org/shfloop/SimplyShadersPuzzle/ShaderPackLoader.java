@@ -5,8 +5,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.github.puzzle.core.resources.ResourceLocation;
 import com.github.puzzle.game.engine.shaders.ItemShader;
+import finalforeach.cosmicreach.rendering.items.ItemModel;
+import finalforeach.cosmicreach.rendering.items.ItemModelBlock;
 import finalforeach.cosmicreach.world.*;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
+import org.shfloop.SimplyShadersPuzzle.mixins.ItemModelBlockInterface;
+import org.shfloop.SimplyShadersPuzzle.mixins.ItemRendererInterfaceMixin;
 import org.shfloop.SimplyShadersPuzzle.mixins.SkyInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import finalforeach.cosmicreach.GameAssetLoader;
@@ -49,6 +53,7 @@ public class ShaderPackLoader {
         //remesh?
         remeshAllRegions();
         remeashAllSkies();
+        changeItemShader();
 
     }
     public static void switchToDefaultPack() {
@@ -56,6 +61,7 @@ public class ShaderPackLoader {
         isZipPack = false;
         setDefaultShaders();
         remeshAllRegions();
+        changeItemShader();
         //remesh
     }
     public static void remeshAllRegions() {
@@ -81,7 +87,15 @@ public class ShaderPackLoader {
         Sky.currentSky = temp;
         SkyInterface.getSkies().put("base:dynamic_sky", temp);
     }
-    public static void updateItemShader() {
+    public static void changeItemShader() {
+        for(ItemModel model : ItemRendererInterfaceMixin.getModels().values()) { // this just needs to go through held items
+            if (model instanceof ItemModelBlock) {
+                System.out.println("Changing model Shader");
+                ((ItemModelBlockInterface)model).setShader(Shadows.BLOCK_ENTITY_SHADER); //Maybe this works
+            }
+
+        } //2d items dont need to get new shader i just need to change entity shader for them to work
+
 
     }
 
@@ -171,6 +185,7 @@ public class ShaderPackLoader {
         EntityShader.ENTITY_SHADER = (EntityShader) allShaders.get(4);
         //for now dont f with death screen (5)
         FinalShader.DEFAULT_FINAL_SHADER = (FinalShader) allShaders.get(6);
+        Shadows.BLOCK_ENTITY_SHADER = (ChunkShader) ChunkShader.DEFAULT_BLOCK_SHADER;
         //TODO Add item SHader back
         //ItemShader.DEFAULT_ITEM_SHADER = (ItemShader) allShaders.get(7);
     }
@@ -205,6 +220,9 @@ public class ShaderPackLoader {
         packShaders.add(allShaders.get(5)); //TODO (death Screen)
 
         FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader("final.vert.glsl", "final.frag.glsl",  false);
+        packShaders.add(allShaders.pop());
+
+        Shadows.BLOCK_ENTITY_SHADER = new ChunkShader("blockEntity.vert.glsl", "blockEntity.frag.glsl");
         packShaders.add(allShaders.pop());
 //TODO Add item SHader back
        // ItemShader.DEFAULT_ITEM_SHADER = new ItemShader("item_shader.vert.glsl", "item_shader.frag.glsl");

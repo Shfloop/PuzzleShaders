@@ -20,7 +20,9 @@
     "ItemModelBlockMixin",
     "ItemModel2DMixin",
     "ExperimentalItemModelMixin",
-    "ItemThingModelMixin"
+    "ItemThingModelMixin",
+    "ItemModelBlockInterface",
+    "ItemRendererInterfaceMixin"
 
   ],
   "client": [],
