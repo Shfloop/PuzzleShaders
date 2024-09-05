@@ -5,13 +5,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.github.puzzle.core.resources.ResourceLocation;
 import com.github.puzzle.game.engine.shaders.ItemShader;
+import finalforeach.cosmicreach.entities.Entity;
+import finalforeach.cosmicreach.rendering.entities.EntityModelInstance;
 import finalforeach.cosmicreach.rendering.items.ItemModel;
 import finalforeach.cosmicreach.rendering.items.ItemModelBlock;
 import finalforeach.cosmicreach.world.*;
-import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
-import org.shfloop.SimplyShadersPuzzle.mixins.ItemModelBlockInterface;
-import org.shfloop.SimplyShadersPuzzle.mixins.ItemRendererInterfaceMixin;
-import org.shfloop.SimplyShadersPuzzle.mixins.SkyInterface;
+import org.shfloop.SimplyShadersPuzzle.mixins.*;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import finalforeach.cosmicreach.GameAssetLoader;
 import finalforeach.cosmicreach.gamestates.InGame;
@@ -54,6 +53,7 @@ public class ShaderPackLoader {
         remeshAllRegions();
         remeashAllSkies();
         changeItemShader();
+        updateEntityShader();
 
     }
     public static void switchToDefaultPack() {
@@ -62,6 +62,7 @@ public class ShaderPackLoader {
         setDefaultShaders();
         remeshAllRegions();
         changeItemShader();
+        updateEntityShader();
         //remesh
     }
     public static void remeshAllRegions() {
@@ -97,6 +98,14 @@ public class ShaderPackLoader {
         } //2d items dont need to get new shader i just need to change entity shader for them to work
 
 
+    }
+    public static void updateEntityShader() {
+
+        for (Entity e: InGameInterface.getLocalPlayer().getZone(InGameInterface.getWorld()).allEntities) {
+            if (e.modelInstance instanceof EntityModelInstance) {
+                ((EntityModelInstanceInterface) e.modelInstance).setShader(EntityShader.ENTITY_SHADER);
+            }
+        }
     }
 
     //not sure what it does if i call .split so it might eb better

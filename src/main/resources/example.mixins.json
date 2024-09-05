@@ -22,7 +22,9 @@
     "ExperimentalItemModelMixin",
     "ItemThingModelMixin",
     "ItemModelBlockInterface",
-    "ItemRendererInterfaceMixin"
+    "ItemRendererInterfaceMixin",
+    "InGameInterface",
+    "EntityModelInstanceInterface"
 
   ],
   "client": [],
