@@ -1,22 +1,23 @@
 package org.shfloop.SimplyShadersPuzzle.mixins;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
-import com.github.puzzle.core.resources.ResourceLocation;
+
+
+import finalforeach.cosmicreach.util.Identifier;
 import org.shfloop.SimplyShadersPuzzle.Constants;
 import org.shfloop.SimplyShadersPuzzle.ShaderPackLoader;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
-import finalforeach.cosmicreach.GameAssetLoader;
+
 import finalforeach.cosmicreach.RuntimeInfo;
-import finalforeach.cosmicreach.gamestates.InGame;
+
 import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
-import finalforeach.cosmicreach.rendering.shaders.EntityShader;
+
 import finalforeach.cosmicreach.rendering.shaders.GameShader;
-import org.lwjgl.opengl.GL20;
+
 import org.lwjgl.opengl.GL32;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -34,7 +35,7 @@ public abstract class GameShaderMixin   {
 
     @Inject(method = "initShaders()V", at = @At("Tail")) // making it head should populate the mods assets with the replacement shaders
     static private void addShadowPassShaders(CallbackInfo ci) {
-        FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader("final.vert.glsl", "final.frag.glsl",  false);
+        FinalShader.initFinalShader();
         Shadows.BLOCK_ENTITY_SHADER = ChunkShader.DEFAULT_BLOCK_SHADER;
     }
     @Overwrite
@@ -67,8 +68,8 @@ public abstract class GameShaderMixin   {
 
 
     @Shadow
-    protected String vertexShaderFileName;
-    @Shadow String fragShaderFileName;
+    protected Identifier vertexShaderId;
+    @Shadow Identifier fragShaderId;
     @Overwrite
     public void reload() {
         GameShader tempThis = ((GameShader) (Object)this); //maybe this works
@@ -82,15 +83,15 @@ public abstract class GameShaderMixin   {
             ShaderProgram.prependFragmentCode = "";
         }
 
-        String vert = loadShaderFile(this.vertexShaderFileName, SimplyShaders.newShaderType.VERT); //preprocess doesnt do anything atm
-        String frag = loadShaderFile(this.fragShaderFileName, SimplyShaders.newShaderType.FRAG);
-        tempThis.validateShader(this.vertexShaderFileName, vert, this.fragShaderFileName, frag);
+        String vert = loadShaderFile(this.vertexShaderId, SimplyShaders.newShaderType.VERT); //preprocess doesnt do anything atm
+        String frag = loadShaderFile(this.fragShaderId, SimplyShaders.newShaderType.FRAG);
+        tempThis.validateShader(this.vertexShaderId, vert, this.fragShaderId, frag);
         ShaderProgram.pedantic = true;
         tempThis.shader = new ShaderProgram(vert, frag);
-       Constants.LOGGER.info("Compiling shader(" + this.vertexShaderFileName + ", " + this.fragShaderFileName + ")...");
+       Constants.LOGGER.info("Compiling shader(" + this.vertexShaderId + ", " + this.fragShaderId + ")...");
         if (!tempThis.shader.isCompiled()) {
             String log = tempThis.shader.getLog();
-            throw new RuntimeException(this.getClass().getSimpleName() + " is not compiled!\n" + log);
+            throw new RuntimeException(this.getClass().getSimpleName() + " is not compiled!\nShader files: " + this.vertexShaderId + ", " + this.fragShaderId + "\n" + log + " \nVERT--------------\n " + vert + " \nFRAG------------\n" + frag);
         } else {
             for(String u : tempThis.shader.getUniforms()) {
                 if (u.contains(".")) {
@@ -114,15 +115,16 @@ public abstract class GameShaderMixin   {
 
     //adding field to each GameShader
     private int[] shaderDrawBuffers;
-    private String loadShaderFile(String shaderName, SimplyShaders.newShaderType shaderType) {
+
+    private String loadShaderFile(Identifier shaderId, SimplyShaders.newShaderType shaderType) {
        // String[] rawShaderLines = GameAssetLoader.loadAsset("shaders/" + shaderName).readString().split("\n"); //
-        String[] rawShaderLines = ShaderPackLoader.loadShader( shaderName);
+        String[] rawShaderLines = ShaderPackLoader.loadShader( shaderId);
         StringBuilder sb = new StringBuilder();
         String version = "";
         //Puzzle difference
-        ResourceLocation id = ResourceLocation.fromString(shaderName);
 
-        String define = id.name.replaceAll("[-/. ()]", "_");
+
+        String define = shaderId.getName().replaceAll("[-/. ()]", "_");
         sb.append("#ifndef " + define + "\n");
         sb.append("#define " + define + "\n");
         boolean foundDrawBuffer = false;
@@ -143,7 +145,8 @@ public abstract class GameShaderMixin   {
             } else if (trimmed.startsWith("#import \"") && trimmed.endsWith("\"")) {
                 String importedShaderName = trimmed.replaceFirst("#import \"", "").replace("\\", "/");
                 importedShaderName = importedShaderName.substring(0, importedShaderName.length() - 1);
-                sb.append(loadShaderFile(importedShaderName, SimplyShaders.newShaderType.IMPORTED) + "\n");
+                Identifier importedId = Identifier.of(importedShaderName);
+                sb.append(loadShaderFile(importedId, SimplyShaders.newShaderType.IMPORTED) + "\n");
             } else if (trimmed.startsWith("/*") && trimmed.endsWith("*/")) {
                foundDrawBuffer = findDrawBuffers(trimmed);
             }else {
@@ -205,6 +208,7 @@ public abstract class GameShaderMixin   {
         }
         return false;
     }
+
 
 
 

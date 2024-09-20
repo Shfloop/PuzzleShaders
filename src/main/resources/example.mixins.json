@@ -17,14 +17,16 @@
     "DynamicSkyMixin",
     "SkyInterface",
     "CommandTimeMixin",
+    "ItemRendererInterfaceMixin",
     "ItemModelBlockMixin",
     "ItemModel2DMixin",
-    "ExperimentalItemModelMixin",
-    "ItemThingModelMixin",
     "ItemModelBlockInterface",
-    "ItemRendererInterfaceMixin",
     "InGameInterface",
-    "EntityModelInstanceInterface"
+    "EntityModelInstanceInterface",
+    "ItemThingModelMixin",
+    "ItemThingModelInterface",
+    "ExperimentalItemModelInterface",
+    "ItemModelWrapperInterface"
 
   ],
   "client": [],

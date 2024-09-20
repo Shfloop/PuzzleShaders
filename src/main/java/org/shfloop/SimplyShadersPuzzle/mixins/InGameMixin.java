@@ -196,8 +196,8 @@ public abstract class InGameMixin extends GameState {
 //
 //        composite0.unbind();
         if (ShaderPackLoader.shaderPackOn) {
-            if (ShaderPackLoader.shader1.size >=11) {
-                for(int i = 10; i < ShaderPackLoader.shader1.size; i++) {
+            if (ShaderPackLoader.shader1.size >=12) {
+                for(int i = 11; i < ShaderPackLoader.shader1.size; i++) {
                     FinalShader composite = (FinalShader)  ShaderPackLoader.shader1.get(i);
                     composite.bind(rawWorldCamera);
                     SimplyShaders.screenQuad.render(composite.shader, GL20.GL_TRIANGLE_FAN);

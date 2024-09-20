@@ -3,12 +3,16 @@ package org.shfloop.SimplyShadersPuzzle;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.github.puzzle.core.resources.ResourceLocation;
-import com.github.puzzle.game.engine.shaders.ItemShader;
+import com.github.puzzle.game.engine.items.ExperimentalItemModel;
+import com.github.puzzle.game.engine.items.ItemThingModel;
+import com.github.puzzle.game.engine.items.model.IPuzzleItemModel;
+import com.github.puzzle.game.engine.items.model.ItemModelWrapper;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.rendering.entities.EntityModelInstance;
 import finalforeach.cosmicreach.rendering.items.ItemModel;
 import finalforeach.cosmicreach.rendering.items.ItemModelBlock;
+
+import finalforeach.cosmicreach.util.Identifier;
 import finalforeach.cosmicreach.world.*;
 import org.shfloop.SimplyShadersPuzzle.mixins.*;
 import org.shfloop.SimplyShadersPuzzle.rendering.FinalShader;
@@ -17,7 +21,10 @@ import finalforeach.cosmicreach.gamestates.InGame;
 import finalforeach.cosmicreach.io.SaveLocation;
 import finalforeach.cosmicreach.rendering.shaders.*;
 
+
+
 import java.io.IOException;
+
 import java.nio.file.*;
 
 public class ShaderPackLoader {
@@ -30,6 +37,8 @@ public class ShaderPackLoader {
     public static String selectedPack;
     public static boolean isZipPack = false;
     public static Array<GameShader> shader1;
+    public static Array<GameShader> shader2;
+    private static boolean useArray2 = false;
 
 
     //also want this to init the shaders
@@ -40,9 +49,9 @@ public class ShaderPackLoader {
         isZipPack = selectedPack.endsWith(".zip");
 
         //should init shaderpack for new array
-       // useArray2 = shaderPackOn; //wont work cause shader 1 wont be used after we start using shader2
+        // useArray2 = shaderPackOn; //wont work cause shader 1 wont be used after we start using shader2
         shaderPackOn = true;
-       // initShaderPack(useArray2 ? shader2 : shader1); // if shaderpackon is true when switching it means we are switching from a shader pack so ive got to use shader2 so the game doesnt crash when remeshing
+        // initShaderPack(useArray2 ? shader2 : shader1); // if shaderpackon is true when switching it means we are switching from a shader pack so ive got to use shader2 so the game doesnt crash when remeshing
         shader1 = new Array<>();
         try {
             initShaderPack(shader1);
@@ -59,6 +68,7 @@ public class ShaderPackLoader {
     public static void switchToDefaultPack() {
         shaderPackOn = false;
         isZipPack = false;
+        useArray2 = false;
         setDefaultShaders();
         remeshAllRegions();
         changeItemShader();
@@ -83,16 +93,27 @@ public class ShaderPackLoader {
         for (Sky sky: Sky.skyChoices) {
             sky.starMesh = null;
         }
+
         Sky.skyChoices.set(0, new DynamicSky("base:dynamic_sky", "Dynamic_Sky"));
         DynamicSky temp =   (DynamicSky) Sky.skyChoices.get(0);
         Sky.currentSky = temp;
         SkyInterface.getSkies().put("base:dynamic_sky", temp);
     }
-    public static void changeItemShader() {
+    public static void changeItemShader() { // i think i can do this without remeshing everything
         for(ItemModel model : ItemRendererInterfaceMixin.getModels().values()) { // this just needs to go through held items
             if (model instanceof ItemModelBlock) {
-                System.out.println("Changing model Shader");
                 ((ItemModelBlockInterface)model).setShader(Shadows.BLOCK_ENTITY_SHADER); //Maybe this works
+            } else if (model instanceof ItemModelWrapper) {
+
+                IPuzzleItemModel temp = ((ItemModelWrapperInterface)model).getParent();
+                if (temp instanceof ItemThingModel) {
+                    ((ItemThingModelInterface)temp).setProgram(com.github.puzzle.game.engine.shaders.ItemShader.DEFAULT_ITEM_SHADER);
+                } else if (temp instanceof ExperimentalItemModel) {
+                    ((ExperimentalItemModelInterface)temp).setProgram(com.github.puzzle.game.engine.shaders.ItemShader.DEFAULT_ITEM_SHADER);
+                } else {
+                    throw new RuntimeException("YOU MISSED A MODEL");
+                }
+
             }
 
         } //2d items dont need to get new shader i just need to change entity shader for them to work
@@ -100,18 +121,22 @@ public class ShaderPackLoader {
 
     }
     public static void updateEntityShader() {
-
-        for (Entity e: InGameInterface.getLocalPlayer().getZone(InGameInterface.getWorld()).allEntities) {
-            if (e.modelInstance instanceof EntityModelInstance) {
-                ((EntityModelInstanceInterface) e.modelInstance).setShader(EntityShader.ENTITY_SHADER);
+        if (InGame.world != null) {
+            for (Entity e: InGameInterface.getLocalPlayer().getZone(InGameInterface.getWorld()).allEntities) {
+                if (e.modelInstance instanceof EntityModelInstance) {
+                    ((EntityModelInstanceInterface) e.modelInstance).setShader(EntityShader.ENTITY_SHADER);
+                }
             }
         }
+
+
     }
 
-    //not sure what it does if i call .split so it might eb better
-    //probably be better to use an inputstream of some kind
-    public static String[] loadShader(String fileName) { //wil just be the shader name ex chunk.frag.glsl no folders
-
+    //not sure what it does if i call .split
+    // probably be better to use an inputstream of some kind
+    public static String[] loadShader(Identifier location) { //wil just be the shader name ex chunk.frag.glsl no folders
+        Constants.LOGGER.info("LOading shader " + location.toString());
+        //if shaderpack on then it should be base location so i basicaaly just need to replace the namespace with folder name
         // if its loading a pack it will start with "/shaders/"
         // else im going to be loading hte jar shader
         if (ShaderPackLoader.shaderPackOn) { //it true needs to load from mods assets shaders/ packname/ program/"shader"
@@ -120,19 +145,19 @@ public class ShaderPackLoader {
             //shaders will be in program folder
             //take the current selected file handle - i need to do something seperate if its a zip[ folder
 
-
+            System.out.println(location.getName());
             //TOdo make an assets map so packs dont keep loading the same common files that already have been found
             if (!isZipPack) { // load from regular gdx file absolute
                 //cant use load asset caues it will add it to the all assets which would interfere with getting vanillal stuff
-              FileHandle unzippedFile = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + fileName);
-                //System.out.println(unzippedFile);
-              return unzippedFile.readString().split("\n");
+                FileHandle unzippedFile = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + location.getName()); //ive excluded /shaders when creating shaderpack shaders
+                System.out.println(unzippedFile);
+                return unzippedFile.readString().split("\n");
             } else {
                 //TODO replace with program
                 Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), "/mods/assets/shaders/" + selectedPack);
                 try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
-                    Path path = fs.getPath( fileName);
-                        //System.out.println(path);
+                    Path path = fs.getPath(location.getName());
+                    System.out.println(path);
                     return Files.readString(path).split("\n");
                 } catch (InvalidPathException e) {
                     //crash for now but FIXME
@@ -143,38 +168,7 @@ public class ShaderPackLoader {
                 }
             }
         } else {
-            //load from internal
-            //the base game shaders should still work
-            //but idc
-            if ( GameAssetLoader.ALL_ASSETS.containsKey(fileName)) { // this would only get base shaders if shaderpack is on
-                return GameAssetLoader.ALL_ASSETS.get(fileName).readString().split("\n");
-            }
-            //this only needs to load final.frag/final.vert
-
-            FileHandle handle = Gdx.files.classpath("baseShaders/" + fileName); //classpath just does resourceasStram
-            //System.out.println(handle.path());
-            if (handle.exists()) { //could just look for default shader as well
-               Constants.LOGGER.info(" from resources");
-                GameAssetLoader.ALL_ASSETS.put(fileName, handle);
-                return handle.readString().split("\n");
-            } // FIXME this is super hacky in puzzle
-            else if (fileName.contains(":")) {
-                //means its a puzzle shader
-               Constants.LOGGER.info("from puzzle" + fileName);
-                ResourceLocation loc =  ResourceLocation.fromString( fileName);
-                loc.name = "shaders/" + loc.name;
-                FileHandle puzzlehandle = loc.locate();
-                return puzzlehandle.readString().split("\n");
-            }
-            else {
-               Constants.LOGGER.info(" from jar");
-                FileHandle fileFromJar = Gdx.files.internal("shaders/" + fileName);
-                GameAssetLoader.ALL_ASSETS.put(fileName, fileFromJar);
-                return fileFromJar.readString().split("\n");
-            }
-            //System.out.println(handle.path());
-            //System.out.println(SaveLocation.getSaveFolderLocation())
-
+            return  GameAssetLoader.loadAsset(location).readString().split("\n");
         }
 
 
@@ -185,7 +179,7 @@ public class ShaderPackLoader {
 
 
     private static void setDefaultShaders() {
-       Array<GameShader> allShaders = GameShaderInterface.getShader();
+        Array<GameShader> allShaders = GameShaderInterface.getShader();
         ChunkShader.DEFAULT_BLOCK_SHADER = (ChunkShader) allShaders.get(0);
         ChunkShader.WATER_BLOCK_SHADER = (ChunkShader) allShaders.get(1);
         SkyStarShader.SKY_STAR_SHADER = (SkyStarShader) allShaders.get(2);
@@ -193,10 +187,11 @@ public class ShaderPackLoader {
 
         EntityShader.ENTITY_SHADER = (EntityShader) allShaders.get(4);
         //for now dont f with death screen (5)
-        FinalShader.DEFAULT_FINAL_SHADER = (FinalShader) allShaders.get(6);
+        ItemShader.DEFAULT_ITEM_SHADER = (ItemShader) allShaders.get(6);
+
+        FinalShader.DEFAULT_FINAL_SHADER = (FinalShader) allShaders.get(7);
+        com.github.puzzle.game.engine.shaders.ItemShader.DEFAULT_ITEM_SHADER = (com.github.puzzle.game.engine.shaders.ItemShader) allShaders.get(8);
         Shadows.BLOCK_ENTITY_SHADER = (ChunkShader) ChunkShader.DEFAULT_BLOCK_SHADER;
-        //TODO Add item SHader back
-        //ItemShader.DEFAULT_ITEM_SHADER = (ItemShader) allShaders.get(7);
     }
 
     //create the new array based onthe shaderpack folder
@@ -211,37 +206,41 @@ public class ShaderPackLoader {
         Array<GameShader> allShaders = GameShaderInterface.getShader();
 
 
-        ChunkShader.DEFAULT_BLOCK_SHADER = new ChunkShader("chunk.vert.glsl", "chunk.frag.glsl");
+        ChunkShader.DEFAULT_BLOCK_SHADER = new ChunkShader(Identifier.of("shaders/chunk.vert.glsl"), Identifier.of("shaders/chunk.frag.glsl"));
         packShaders.add(allShaders.pop()); //i dont want to infinitly add shaders to allshaders
 
-        ChunkShader.WATER_BLOCK_SHADER = new ChunkShader("chunk-water.vert.glsl", "chunk-water.frag.glsl");
+        ChunkShader.WATER_BLOCK_SHADER = new ChunkShader(Identifier.of("shaders/chunk-water.vert.glsl"), Identifier.of("shaders/chunk-water.frag.glsl"));
         packShaders.add(allShaders.pop());
 
-        SkyStarShader.SKY_STAR_SHADER = new SkyStarShader("sky-star.vert.glsl", "sky-star.frag.glsl");
+        SkyStarShader.SKY_STAR_SHADER = new SkyStarShader(Identifier.of("shaders/sky-star.vert.glsl"), Identifier.of("shaders/sky-star.frag.glsl"));
         packShaders.add(allShaders.pop());
 
-        SkyShader.SKY_SHADER =  new SkyShader("sky.vert.glsl", "sky.frag.glsl");
+        SkyShader.SKY_SHADER =  new SkyShader(Identifier.of("shaders/sky.vert.glsl"), Identifier.of("shaders/sky.frag.glsl"));
         packShaders.add(allShaders.pop());
 
-        EntityShader.ENTITY_SHADER =  new EntityShader("entity.vert.glsl", "entity.frag.glsl");
+        EntityShader.ENTITY_SHADER =  new EntityShader(Identifier.of("shaders/entity.vert.glsl"), Identifier.of("shaders/entity.frag.glsl"));
         packShaders.add(allShaders.pop());
 
-        packShaders.add(allShaders.get(5)); //TODO (death Screen)
+        packShaders.add(allShaders.get(5)); //TODO
 
-        FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader("final.vert.glsl", "final.frag.glsl",  false);
+        com.github.puzzle.game.engine.shaders.ItemShader.DEFAULT_ITEM_SHADER = new com.github.puzzle.game.engine.shaders.ItemShader(Identifier.of("shaders/item_shader.vert.glsl"), Identifier.of("shaders/item_shader.frag.glsl"));
         packShaders.add(allShaders.pop());
 
-        Shadows.BLOCK_ENTITY_SHADER = new ChunkShader("blockEntity.vert.glsl", "blockEntity.frag.glsl");
-        packShaders.add(allShaders.pop());
-//TODO Add item SHader back
-       // ItemShader.DEFAULT_ITEM_SHADER = new ItemShader("item_shader.vert.glsl", "item_shader.frag.glsl");
-//packShaders.add(allShaders.pop());
 
 
-        Shadows.SHADOW_CHUNK = new ChunkShader("shadowChunk.vert.glsl", "shadowChunk.frag.glsl");
+        FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader(Identifier.of("shaders/final.vert.glsl"), Identifier.of("shaders/final.frag.glsl"),  false);
         packShaders.add(allShaders.pop());
 
-        Shadows.SHADOW_ENTITY = new EntityShader("shadowEntity.vert.glsl", "shadowEntity.frag.glsl");
+        Shadows.BLOCK_ENTITY_SHADER = new ChunkShader(Identifier.of("shaders/blockEntity.vert.glsl"), Identifier.of("shaders/blockEntity.frag.glsl"));
+        packShaders.add(allShaders.pop());
+
+        //add the rest from the pack  shadow , shadowentity, ? composite0-8 as many as given
+
+
+        Shadows.SHADOW_CHUNK = new ChunkShader(Identifier.of("shaders/shadowChunk.vert.glsl"), Identifier.of("shaders/shadowChunk.frag.glsl"));
+        packShaders.add(allShaders.pop());
+
+        Shadows.SHADOW_ENTITY = new EntityShader(Identifier.of("shaders/shadowEntity.vert.glsl"), Identifier.of("shaders/shadowEntity.frag.glsl"));
         packShaders.add(allShaders.pop());
 
         //load composite and settings here maybe
@@ -250,11 +249,11 @@ public class ShaderPackLoader {
             Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), "/mods/assets/shaders/" + selectedPack);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
                 for (int i = 0; i < 8; i++) {
-                    String compositeName = "composite" + i;
+                    String compositeName = "shaders/composite" + i;
                     Path path = fs.getPath( compositeName + ".frag.glsl");
                     //will cause invalid pathexception if it doesnt exits
                     if (Files.exists(path)) {
-                        new FinalShader(compositeName + ".vert.glsl", compositeName + ".frag.glsl", true);
+                        new FinalShader(Identifier.of(compositeName + ".vert.glsl"), Identifier.of(compositeName + ".frag.glsl"), true);
                         packShaders.add(allShaders.pop());
                     }
 
@@ -268,12 +267,12 @@ public class ShaderPackLoader {
             }
         } else {
             for (int i = 0; i < 8; i++ ) {
-                String compositeName = "composite" + i;
-               Constants.LOGGER.info(compositeName);
+                String compositeName = "shaders/composite" + i;
+                System.out.println(compositeName);
                 FileHandle compositeTest = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + compositeName + ".frag.glsl");
 
                 if (compositeTest.exists()) {
-                    new FinalShader(compositeName + ".vert.glsl", compositeName + ".frag.glsl", true);
+                    new FinalShader(Identifier.of(compositeName + ".vert.glsl"), Identifier.of(compositeName + ".frag.glsl"), true);
                     packShaders.add(allShaders.pop());
                 } else {
 

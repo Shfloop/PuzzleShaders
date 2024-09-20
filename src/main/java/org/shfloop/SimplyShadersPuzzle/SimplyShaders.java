@@ -10,18 +10,21 @@ import com.github.puzzle.core.PuzzleRegistries;
 import com.github.puzzle.core.localization.ILanguageFile;
 import com.github.puzzle.core.localization.LanguageManager;
 import com.github.puzzle.core.localization.files.LanguageFileVersion1;
-import com.github.puzzle.core.resources.ResourceLocation;
 
+
+import com.github.puzzle.core.resources.PuzzleGameAssetLoader;
 import com.github.puzzle.game.events.OnPreLoadAssetsEvent;
 import com.github.puzzle.game.events.OnRegisterBlockEvent;
 
 import com.github.puzzle.loader.entrypoint.interfaces.ModInitializer;
 
 
+import finalforeach.cosmicreach.util.Identifier;
 import org.greenrobot.eventbus.Subscribe;
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SimplyShaders implements ModInitializer {
     public static RenderFBO buffer ; //this might be a good way to go about this but im not really sure
@@ -46,8 +49,9 @@ public class SimplyShaders implements ModInitializer {
     public void onEvent(OnPreLoadAssetsEvent event) {
         ILanguageFile lang = null;
         try {
-            lang = LanguageFileVersion1.loadLanguageFromString(new ResourceLocation(Constants.MOD_ID, "languages/en-US.json").locate().readString());
-        } catch (IOException e) {
+            lang = LanguageFileVersion1.loadLanguageFile(
+                    Objects.requireNonNull(PuzzleGameAssetLoader.locateAsset(Identifier.of(Constants.MOD_ID, "languages/en-US.json")))
+            );} catch (IOException e) {
             throw new RuntimeException(e);
         }
         LanguageManager.registerLanguageFile(lang);

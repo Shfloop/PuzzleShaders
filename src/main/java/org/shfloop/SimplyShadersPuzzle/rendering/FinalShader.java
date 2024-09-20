@@ -4,20 +4,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import finalforeach.cosmicreach.settings.GraphicsSettings;
+import finalforeach.cosmicreach.util.Identifier;
+import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
 import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
 import finalforeach.cosmicreach.rendering.shaders.GameShader;
 import finalforeach.cosmicreach.world.Sky;
 
+
 public class FinalShader extends GameShader {
     public static FinalShader DEFAULT_FINAL_SHADER;
     private final boolean isComposite;
 
-    public FinalShader(String vertexShader, String fragmentShader, boolean isComposite) {
+    public FinalShader(Identifier vertexShader, Identifier fragmentShader, boolean isComposite) {
         super(vertexShader,fragmentShader);
         this.allVertexAttributesObj = new VertexAttributes(new VertexAttribute[]{VertexAttribute.Position(), VertexAttribute.TexCoords(0) });
 
         this.isComposite = isComposite;
+    }
+    public static void initFinalShader() {
+        FinalShader.DEFAULT_FINAL_SHADER =  new FinalShader(( Identifier.of("simply_shaders", "shaders/final.vert.glsl")), (Identifier.of("simply_shaders","shaders/final.frag.glsl")) ,  false);
     }
     public void bind(Camera worldCamera) {
         super.bind(worldCamera);
@@ -41,8 +48,19 @@ public class FinalShader extends GameShader {
 
         texNum= this.bindOptionalTexture("noiseTex", ChunkShader.noiseTex, texNum);
         texNum= this.bindOptionalTextureI("depthTex0", SimplyShaders.buffer.depthTex0.id, texNum);
+        if (Shadows.initalized) {
+            texNum= this.bindOptionalTextureI("shadowMap", Shadows.shadow_map.getDepthMapTexture().id, texNum);
+        }
         Sky sky = Sky.currentSky;
         this.bindOptionalUniform3f("skyAmbientColor", sky.currentAmbientColor);
+        this.bindOptionalInt("renderFar", GraphicsSettings.renderDistanceInChunks.getValue() * 16); //chunks are 16 blocks wide
+        this.bindOptionalUniform3f("cameraDirection", worldCamera.direction); //i might be able to find this in final shader
+        this.bindOptionalMatrix4("invProjView", worldCamera.invProjectionView);
+
+        this.bindOptionalMatrix4("u_projViewTrans", worldCamera.combined);
+        //this.bindOptionalInt("renderNear", GraphicsSettings.renderDistanceInChunks.getValue() * 32);
+        this.bindOptionalMatrix4("u_proj", worldCamera.projection);
+        this.bindOptionalMatrix4("u_view", worldCamera.view);
 
 //        Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //        Gdx.gl.glBindTexture(GL20.GL_TEXTURE_2D, texId);
