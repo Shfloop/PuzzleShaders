@@ -196,13 +196,15 @@ public abstract class GameShaderMixin   {
                 throw new RuntimeException("NO drawbuffers elements defined"); // could probably just make the default array
             }
             shaderDrawBuffers = new int[drawBufferLength];//drawbufer points to next open spot so should be fine
-            System.out.print("Defined DrawBuffers: {");
+            //System.out.print("Defined DrawBuffers: {");
+            StringBuilder output = new StringBuilder("Defined DrawBuffers: {");
             for (int i = 0; i < drawBufferLength; i++) {
                 shaderDrawBuffers[i] = tempdrawBuffers[i] + GL32.GL_COLOR_ATTACHMENT0 -48; //48 to convert the ascii back to 0-7
-                System.out.print(tempdrawBuffers[i] - 48 + ", ");
+                output.append(tempdrawBuffers[i] - 48).append(", ");
                 //copy over the data with a new sized array and the appropriate colorattachment value
             }
-           Constants.LOGGER.info("}");
+            output.append("}");
+           Constants.LOGGER.info(output);
 
             return true;
         }

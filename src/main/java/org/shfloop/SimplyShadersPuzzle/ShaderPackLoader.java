@@ -135,7 +135,7 @@ public class ShaderPackLoader {
     //not sure what it does if i call .split
     // probably be better to use an inputstream of some kind
     public static String[] loadShader(Identifier location) { //wil just be the shader name ex chunk.frag.glsl no folders
-        Constants.LOGGER.info("LOading shader " + location.toString());
+        //Constants.LOGGER.info("LOading shader " + location.toString());
         //if shaderpack on then it should be base location so i basicaaly just need to replace the namespace with folder name
         // if its loading a pack it will start with "/shaders/"
         // else im going to be loading hte jar shader
@@ -145,19 +145,19 @@ public class ShaderPackLoader {
             //shaders will be in program folder
             //take the current selected file handle - i need to do something seperate if its a zip[ folder
 
-            System.out.println(location.getName());
+
             //TOdo make an assets map so packs dont keep loading the same common files that already have been found
             if (!isZipPack) { // load from regular gdx file absolute
                 //cant use load asset caues it will add it to the all assets which would interfere with getting vanillal stuff
                 FileHandle unzippedFile = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + location.getName()); //ive excluded /shaders when creating shaderpack shaders
-                System.out.println(unzippedFile);
+                //System.out.println(unzippedFile);
                 return unzippedFile.readString().split("\n");
             } else {
                 //TODO replace with program
                 Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), "/mods/assets/shaders/" + selectedPack);
                 try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
                     Path path = fs.getPath(location.getName());
-                    System.out.println(path);
+                    //System.out.println(path);
                     return Files.readString(path).split("\n");
                 } catch (InvalidPathException e) {
                     //crash for now but FIXME
@@ -268,7 +268,7 @@ public class ShaderPackLoader {
         } else {
             for (int i = 0; i < 8; i++ ) {
                 String compositeName = "shaders/composite" + i;
-                System.out.println(compositeName);
+                //System.out.println(compositeName);
                 FileHandle compositeTest = Gdx.files.absolute(SaveLocation.getSaveFolderLocation() + "/mods/assets/shaders/" + ShaderPackLoader.selectedPack +  "/" + compositeName + ".frag.glsl");
 
                 if (compositeTest.exists()) {
