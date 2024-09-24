@@ -50,6 +50,7 @@ public class FinalShader extends GameShader {
         texNum= this.bindOptionalTextureI("depthTex0", SimplyShaders.buffer.depthTex0.id, texNum);
         if (Shadows.initalized) {
             texNum= this.bindOptionalTextureI("shadowMap", Shadows.shadow_map.getDepthMapTexture().id, texNum);
+            this.bindOptionalUniform3f("lightDir", Shadows.getCamera().direction);
         }
         Sky sky = Sky.currentSky;
         this.bindOptionalUniform3f("skyAmbientColor", sky.currentAmbientColor);
@@ -61,6 +62,7 @@ public class FinalShader extends GameShader {
         //this.bindOptionalInt("renderNear", GraphicsSettings.renderDistanceInChunks.getValue() * 32);
         this.bindOptionalMatrix4("u_proj", worldCamera.projection);
         this.bindOptionalMatrix4("u_view", worldCamera.view);
+        //this.bindOptionalFloat("frameTimeCounter", (float) Gdx.graphics.getFrameId() );
 
 //        Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //        Gdx.gl.glBindTexture(GL20.GL_TEXTURE_2D, texId);
