@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import com.badlogic.gdx.math.Vector3;
+import finalforeach.cosmicreach.chat.Chat;
+import finalforeach.cosmicreach.gamestates.InGame;
+import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
 import finalforeach.cosmicreach.io.SaveLocation;
 import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
@@ -62,7 +65,18 @@ public class Shadows {
     public static void turnShadowsOn()  {
        Constants.LOGGER.info("Turning Shaders On");
 
-        ShaderPackLoader.switchToShaderPack();
+        try {
+            ShaderPackLoader.switchToShaderPack();
+        } catch (RuntimeException e) {
+
+            ShaderPackLoader.switchToDefaultPack();
+            Constants.LOGGER.info("ERROR in Shader pack loading");
+            Chat.MAIN_CHAT.sendMessage(InGame.world, InGame.getLocalPlayer(), null, e.getMessage());
+            GameShaderInterface.getShader().pop();
+            Shadows.shaders_on = false;
+            initalized = false;
+            return;
+        }
        Constants.LOGGER.info("creating Shadow map");
         try { shadow_map= new ShadowMap();}
         catch (Exception e){
