@@ -42,14 +42,12 @@ public abstract class GameShaderMixin   {
     public static void reloadAllShaders() {
        Constants.LOGGER.info("Reloading all Shaders");
         if (ShaderPackLoader.shaderPackOn) {
-            for (GameShader shader: ShaderPackLoader.shader1) {
-                shader.reload();
-            }
-        } else {
-            for (GameShader shader: GameShaderInterface.getShader()) {
-                shader.reload();
-            }
+         return;
         }
+        for (GameShader shader: GameShaderInterface.getShader()) {
+            shader.reload();
+        }
+
        Constants.LOGGER.info("Reloaded all Shaders");
     }
 
