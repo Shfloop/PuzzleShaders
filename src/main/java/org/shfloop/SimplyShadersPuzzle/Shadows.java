@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import finalforeach.cosmicreach.chat.Chat;
 import finalforeach.cosmicreach.gamestates.InGame;
+import finalforeach.cosmicreach.rendering.shaders.GameShader;
 import org.shfloop.SimplyShadersPuzzle.mixins.GameShaderInterface;
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
 import finalforeach.cosmicreach.io.SaveLocation;
@@ -71,8 +73,13 @@ public class Shadows {
 
             ShaderPackLoader.switchToDefaultPack();
             Constants.LOGGER.info("ERROR in Shader pack loading");
+            Constants.LOGGER.info(e.getMessage());
             Chat.MAIN_CHAT.sendMessage(InGame.world, InGame.getLocalPlayer(), null, e.getMessage());
-            GameShaderInterface.getShader().pop();
+            Array<GameShader> defaultShaders = GameShaderInterface.getShader();
+            if(defaultShaders.size > 7) { //default shaders should only be size 7 // if shaderpack loading fails it can add a shader too it without removing it
+                //This shouldnt be necessary but is an easy solution to shader loading without redoing the entire thing
+                defaultShaders.pop();
+            }
             Shadows.shaders_on = false;
             initalized = false;
             return;
