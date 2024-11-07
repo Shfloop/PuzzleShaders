@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
+import org.shfloop.SimplyShadersPuzzle.BlockPropertiesIDLoader;
 import org.shfloop.SimplyShadersPuzzle.ShaderPackLoader;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -104,30 +105,29 @@ public abstract class InGameMixin extends GameState {
             Shadows.updateCenteredCamera();
 
 
+            if (BlockPropertiesIDLoader.packEnableShadows) { //TODO TEMPORARY
+                Gdx.gl.glBindFramebuffer(36160, Shadows.shadow_map.getDepthMapFbo());
+                Gdx.gl.glViewport(0, 0, Shadows.shadow_map.getDepthMapTexture().getWidth(), Shadows.shadow_map.getDepthMapTexture().getHeight());
 
-            Gdx.gl.glBindFramebuffer(36160, Shadows.shadow_map.getDepthMapFbo());
-            Gdx.gl.glViewport(0,0, Shadows.shadow_map.getDepthMapTexture().getWidth(), Shadows.shadow_map.getDepthMapTexture().getHeight());
+                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+                Shadows.shadowPass = true;
+                // nned to improve framerate its getting cut by like 1/3 with default shaders
+                //using hte same render causes a few extra BlockModelJson calls but it isnt very much compared to what it did originally
+                GameSingletons.zoneRenderer.render(playerZone, Shadows.getCamera());
 
-            Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-            Shadows.shadowPass = true;
-           // nned to improve framerate its getting cut by like 1/3 with default shaders
-            //using hte same render causes a few extra BlockModelJson calls but it isnt very much compared to what it did originally
-            GameSingletons.zoneRenderer.render(playerZone, Shadows.getCamera());
+                Gdx.gl.glDepthMask(true);
 
-            Gdx.gl.glDepthMask(true);
+                for (Entity e : playerZone.allEntities) {
+                    e.render(Shadows.getCamera()); //ENtity shaders during shadow pass also need to be distorted to apply correctly to shadow map
+                }
+                Shadows.shadowPass = false;
 
-            for (Entity e : playerZone.allEntities) {
-                e.render(Shadows.getCamera()); //ENtity shaders during shadow pass also need to be distorted to apply correctly to shadow map
+
+                Gdx.gl.glBindFramebuffer(36160, 0); // might not have to call this if im setting a different framebuffer
+                Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                Gdx.gl.glClear(org.lwjgl.opengl.GL20.GL_DEPTH_BUFFER_BIT | org.lwjgl.opengl.GL20.GL_COLOR_BUFFER_BIT); // might not need this
+
             }
-            Shadows.shadowPass = false;
-
-
-
-            Gdx.gl.glBindFramebuffer(36160, 0); // might not have to call this if im setting a different framebuffer
-            Gdx.gl.glViewport(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Gdx.gl.glClear(org.lwjgl.opengl.GL20.GL_DEPTH_BUFFER_BIT | org.lwjgl.opengl.GL20.GL_COLOR_BUFFER_BIT); // might not need this
-
-
 
             //Shadows.redraw_stars = true;
 
@@ -196,8 +196,8 @@ public abstract class InGameMixin extends GameState {
 //
 //        composite0.unbind();
         if (ShaderPackLoader.shaderPackOn) {
-            if (ShaderPackLoader.shader1.size >=12) {
-                for(int i = 11; i < ShaderPackLoader.shader1.size; i++) {
+            if (ShaderPackLoader.shader1.size >=ShaderPackLoader.compositeStartIdx + 1) {
+                for(int i = ShaderPackLoader.compositeStartIdx; i < ShaderPackLoader.shader1.size; i++) {
                     FinalShader composite = (FinalShader)  ShaderPackLoader.shader1.get(i);
                     composite.bind(rawWorldCamera);
                     SimplyShaders.screenQuad.render(composite.shader, GL20.GL_TRIANGLE_FAN);

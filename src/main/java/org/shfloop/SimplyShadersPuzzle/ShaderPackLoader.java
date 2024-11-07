@@ -26,6 +26,8 @@ import finalforeach.cosmicreach.rendering.shaders.*;
 import java.io.IOException;
 
 import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShaderPackLoader {
     //called from GameShaderMixin to load the shader based off shader selection (loaded from settings)
@@ -37,8 +39,8 @@ public class ShaderPackLoader {
     public static String selectedPack;
     public static boolean isZipPack = false;
     public static Array<GameShader> shader1;
-    public static Array<GameShader> shader2;
-    private static boolean useArray2 = false;
+    public static final Map<String, String> shaderDefaultsMap = new HashMap<>();
+    public static int compositeStartIdx =0;
 
 
     //also want this to init the shaders
@@ -69,7 +71,6 @@ public class ShaderPackLoader {
     public static void switchToDefaultPack() {
         shaderPackOn = false;
         isZipPack = false;
-        useArray2 = false;
         setDefaultShaders();
         remeshAllRegions();
         changeItemShader();
@@ -119,6 +120,20 @@ public class ShaderPackLoader {
 
         } //2d items dont need to get new shader i just need to change entity shader for them to work
 
+    }
+    public static String[] tryDefualtShader(Identifier location) {
+
+        //if the shader is in the map then try to assign a different shader
+        //if it isnt in the map try loading from base shaders
+        //all else fails throw runtimeerror
+
+        String locNew = shaderDefaultsMap.get(location.getName());
+        if (locNew != null) {
+            System.out.println("Missing shader, defaulting to: " +  locNew);
+            return loadShader(Identifier.of(locNew), true); //i want these to search through recursively
+        }
+        System.out.println("Missing shader, loading from base: " + location.toString());
+        return loadShader(location,false);
 
     }
     public static void updateEntityShader() {
@@ -135,14 +150,16 @@ public class ShaderPackLoader {
 
     //not sure what it does if i call .split
     // probably be better to use an inputstream of some kind
-    public static String[] loadShader(Identifier location) { //wil just be the shader name ex chunk.frag.glsl no folders
-        Constants.LOGGER.info("LOADING SHADER " + location.getName());
-        if (ShaderPackLoader.shaderPackOn) {
-
-
+    public static String[] loadShader(Identifier location, boolean lookInShaderPack) {
+        if (lookInShaderPack) {
             Identifier temp = Identifier.of("shaderpacks/" + selectedPack, location.getName());
             //in case of shaders from pack for now i dont have defaulting so ill just crash
-            return loadFromZipOrUnzipShaderPack(temp);
+            try {
+                return loadFromZipOrUnzipShaderPack(temp);
+            } catch (InvalidPathException e) { //TODO not sure if zip packs will throw the same error if file isnt found
+                //if it falls back to a default shader but doesnt find it it should crash
+                return tryDefualtShader(location);
+            }
             //TOdo make an assets map so packs dont keep loading the same common files that already have been found
 
         } else {
@@ -231,16 +248,19 @@ public class ShaderPackLoader {
         packShaders.add(allShaders.pop());
 
         //add the rest from the pack  shadow , shadowentity, ? composite0-8 as many as given
+        if (BlockPropertiesIDLoader.packEnableShadows) {
 
+            Shadows.SHADOW_CHUNK = new ChunkShader(Identifier.of("shaders/shadowChunk.vert.glsl"), Identifier.of("shaders/shadowChunk.frag.glsl"));
+            packShaders.add(allShaders.pop());
 
-        Shadows.SHADOW_CHUNK = new ChunkShader(Identifier.of("shaders/shadowChunk.vert.glsl"), Identifier.of("shaders/shadowChunk.frag.glsl"));
-        packShaders.add(allShaders.pop());
-
-        Shadows.SHADOW_ENTITY = new EntityShader(Identifier.of("shaders/shadowEntity.vert.glsl"), Identifier.of("shaders/shadowEntity.frag.glsl"));
-        packShaders.add(allShaders.pop());
-
+            Shadows.SHADOW_ENTITY = new EntityShader(Identifier.of("shaders/shadowEntity.vert.glsl"), Identifier.of("shaders/shadowEntity.frag.glsl"));
+            packShaders.add(allShaders.pop());
+        }
         //load composite and settings here maybe
         //composite shaders start at 9
+        compositeStartIdx = packShaders.size - 1;
+        System.out.println("Composite start IDX " + compositeStartIdx);
+
         if (isZipPack) {
             Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), "/mods/shaderpacks/" + selectedPack);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
@@ -280,5 +300,9 @@ public class ShaderPackLoader {
 
         }
 
+    }
+    static {
+        shaderDefaultsMap.put("shaders/blockEntity.frag.glsl","shaders/chunk.frag.glsl");
+        shaderDefaultsMap.put("shaders/blockEntity.vert.glsl","shaders/chunk.vert.glsl");
     }
 }
