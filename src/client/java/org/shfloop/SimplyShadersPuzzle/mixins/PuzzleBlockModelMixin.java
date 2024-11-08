@@ -1,6 +1,6 @@
 package org.shfloop.SimplyShadersPuzzle.mixins;
 
-import com.github.puzzle.game.engine.GameLoader;
+
 import com.github.puzzle.game.engine.blocks.models.PuzzleBlockModel;
 import finalforeach.cosmicreach.rendering.blockmodels.BlockModel;
 import org.shfloop.SimplyShadersPuzzle.BlockPropertiesIDLoader;

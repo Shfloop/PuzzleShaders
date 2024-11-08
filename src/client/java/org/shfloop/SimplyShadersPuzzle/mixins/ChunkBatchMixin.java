@@ -8,13 +8,9 @@ import finalforeach.cosmicreach.rendering.meshes.IGameMesh;
 import finalforeach.cosmicreach.rendering.shaders.GameShader;
 import finalforeach.cosmicreach.world.Zone;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
-import com.llamalad7.mixinextras.sugar.Local;
 import finalforeach.cosmicreach.rendering.ChunkBatch;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static finalforeach.cosmicreach.rendering.ChunkBatch.lastBoundShader;
 

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import org.shfloop.SimplyShadersPuzzle.Constants;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
-import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
 import finalforeach.cosmicreach.BlockGame;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

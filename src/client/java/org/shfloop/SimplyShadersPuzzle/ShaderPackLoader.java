@@ -7,6 +7,7 @@ import com.github.puzzle.game.engine.items.ExperimentalItemModel;
 import com.github.puzzle.game.engine.items.ItemThingModel;
 import com.github.puzzle.game.engine.items.model.IPuzzleItemModel;
 import com.github.puzzle.game.engine.items.model.ItemModelWrapper;
+import finalforeach.cosmicreach.GameSingletons;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.rendering.entities.EntityModelInstance;
 import finalforeach.cosmicreach.rendering.items.ItemModel;
@@ -79,11 +80,11 @@ public class ShaderPackLoader {
         //remesh
     }
     public static void remeshAllRegions() {
-        if (InGame.world == null) {
+        if (GameSingletons.world == null) {
             return;
         }
         //this needs to
-        for (Zone zone: InGame.world.getZones()) {
+        for (Zone zone: GameSingletons.world.getZones()) {
             for (Region reg: zone.getRegions()) {
                 for (Chunk chunk: reg.getChunks()) {
                     chunk.flagForRemeshing(false); //hm setting this to true does not help makes it much worse
@@ -142,8 +143,8 @@ public class ShaderPackLoader {
 
     }
     public static void updateEntityShader() {
-        if (InGame.world != null) {
-            for (Entity e: InGameInterface.getLocalPlayer().getZone(InGameInterface.getWorld()).allEntities) {
+        if (GameSingletons.world != null) {
+            for (Entity e: InGame.getLocalPlayer().getZone().getAllEntities()) {
                 if (e.modelInstance instanceof EntityModelInstance) {
                     ((EntityModelInstanceInterface) e.modelInstance).setShader(EntityShader.ENTITY_SHADER);
                 }
@@ -179,13 +180,13 @@ public class ShaderPackLoader {
     }
     public static String[] loadFromZipOrUnzipShaderPack(Identifier location) throws InvalidPathException {
         if (isZipPack) {
-            Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(), location.getNamespace()); // in case of shaderpacks namespace will be shaderpacks/PACKNAME
+            Path zipFilePath = Paths.get(SaveLocation.getSaveFolderLocation(),"mods" ,location.getNamespace()); // in case of shaderpacks namespace will be shaderpacks/PACKNAME
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
                 Path path = fs.getPath(location.getName());
-                System.out.println(path);
+                //System.out.println(path);
                 return Files.readString(path).split("\n");
             }  catch (IOException e) {
-                throw new RuntimeException("Could not read the file in zip");
+                throw new InvalidPathException(e.getMessage(), "Could not read the file in zip: " );
 
             }
         } else {
@@ -263,7 +264,7 @@ public class ShaderPackLoader {
         }
         //load composite and settings here maybe
         //composite shaders start at 9
-        compositeStartIdx = packShaders.size - 1;
+        compositeStartIdx = packShaders.size ;
         System.out.println("Composite start IDX " + compositeStartIdx);
 
         if (isZipPack) {

@@ -2,7 +2,6 @@ package org.shfloop.SimplyShadersPuzzle;
 
 import com.badlogic.gdx.utils.StringBuilder;
 import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
-import org.shfloop.SimplyShadersPuzzle.mixins.CustomTextureLoaderMixin;
 
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;

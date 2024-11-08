@@ -1,19 +1,31 @@
 plugins {
-    id "java"
-    id "cr_puzzle_gradle"
-    id "com.github.johnrengelman.shadow"
+    id 'java'
+    id 'jigsaw'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow'
+
 }
 
-puzzle_loader {
-    accessManipulatorPath = file("src/main/resources/example_mod.manipulator")
+group = "com.github"
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "simply-shaders-puzzle" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
 }
 
 repositories {
     mavenCentral()
+    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
-    compileOnly("finalforeach:cosmicreach:$cosmic_reach_version:client")
+    cosmicReach("finalforeach:cosmicreach:$cosmic_reach_version")
 }
 
 processResources {
@@ -34,4 +46,19 @@ processResources {
     filesMatching(resourceTargets) {
         expand replaceProperties
     }
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = id
+
+            artifact source: buildMergedBundleJar, classifier: 'client', extension: 'jar'
+            artifact source: buildServerBundleJar, classifier: 'server', extension: 'jar'
+        }
+    }
+}
+wrapper {
+    gradleVersion = "8.5"
+    distributionType = Wrapper.DistributionType.ALL
 }

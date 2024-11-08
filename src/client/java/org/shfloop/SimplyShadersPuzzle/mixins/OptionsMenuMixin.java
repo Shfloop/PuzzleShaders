@@ -23,7 +23,7 @@ public abstract class OptionsMenuMixin extends GameState {
             @Override
             public void onClick() {
                 super.onClick();
-                GameState.switchToGameState(new ShaderSelectionMenu(temp));
+                switchToGameState(new ShaderSelectionMenu(temp));
             }
 
         };

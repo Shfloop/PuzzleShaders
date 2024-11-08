@@ -4,20 +4,16 @@ import com.badlogic.gdx.Gdx;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.llamalad7.mixinextras.sugar.Local;
+import finalforeach.cosmicreach.GameSingletons;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
-import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
-import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
 import finalforeach.cosmicreach.gamestates.InGame;
 import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
 import finalforeach.cosmicreach.rendering.shaders.GameShader;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL32;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Arrays;
 
 
 @Mixin(ChunkShader.class)
@@ -33,7 +29,7 @@ public abstract class ChunkShaderMixin extends GameShader {
     private void injectShaderParam(CallbackInfo ci ,@Local int texNum) {
 
 
-        if (Shadows.shaders_on && InGame.world != null) { //should find a better way to do this
+        if (Shadows.shaders_on && GameSingletons.world != null) { //should find a better way to do this
 
             this.bindOptionalUniformMatrix("lightSpaceMatrix", Shadows.getCamera().combined);
             //FIXME This is redundant i only need to bind the shadowmap texture once when the shader is created because it doesnchange

@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import finalforeach.cosmicreach.GameSingletons;
 import finalforeach.cosmicreach.gamestates.*;
 import finalforeach.cosmicreach.io.SaveLocation;
-import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
 import finalforeach.cosmicreach.ui.HorizontalAnchor;
 import finalforeach.cosmicreach.ui.UIElement;
 import finalforeach.cosmicreach.ui.VerticalAnchor;
@@ -234,7 +234,7 @@ public class ShaderSelectionMenu extends GameState{
                 public void onClick() {
                     super.onClick();
                     applyShaderPackSelection();
-                    GameState.switchToGameState(previousState);
+                    switchToGameState(previousState);
                 }
             };
             returnButton.vAnchor = VerticalAnchor.BOTTOM_ALIGNED;
@@ -270,7 +270,7 @@ public class ShaderSelectionMenu extends GameState{
         ShaderPackLoader.selectedPack = allShaders.get(last_selected_idx - 1) ; // Last selected idx needs to be -1 cause i dont have the enable shader buitton in allshaders but its in the scroll ilst
         //Shadows.shaders_on = shadersOn; /
         //gonna ghange it first cvause it migth be a aproblem if cleanup is called but the render still happens with shaders on
-        if (InGame.world != null) {
+        if (GameSingletons.world != null) {
             if (Shadows.shaders_on) {
                 try {
                     Shadows.turnShadowsOn();

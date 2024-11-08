@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "org.shfloop.SimplyShadersPuzzle.mixins",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
+  "client": [
 
     "OptionsMenuMixin",
     "ChunkShaderMixin",
@@ -21,7 +21,6 @@
     "ItemModelBlockMixin",
     "ItemModel2DMixin",
     "ItemModelBlockInterface",
-    "InGameInterface",
     "EntityModelInstanceInterface",
     "ItemThingModelMixin",
     "ItemThingModelInterface",
@@ -32,7 +31,6 @@
     "PuzzleBlockModelMixin"
 
   ],
-  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

@@ -3,7 +3,6 @@ package org.shfloop.SimplyShadersPuzzle.mixins;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.utils.ScreenUtils;
 import org.shfloop.SimplyShadersPuzzle.BlockPropertiesIDLoader;
 import org.shfloop.SimplyShadersPuzzle.ShaderPackLoader;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
@@ -15,7 +14,6 @@ import finalforeach.cosmicreach.GameSingletons;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.gamestates.GameState;
 import finalforeach.cosmicreach.gamestates.InGame;
-import finalforeach.cosmicreach.rendering.shaders.ChunkShader;
 import finalforeach.cosmicreach.rendering.shaders.GameShader;
 import finalforeach.cosmicreach.ui.UI;
 import finalforeach.cosmicreach.world.Sky;
@@ -26,8 +24,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.io.IOException;
 
 @Mixin(InGame.class)
 public abstract class InGameMixin extends GameState {
@@ -117,7 +113,7 @@ public abstract class InGameMixin extends GameState {
 
                 Gdx.gl.glDepthMask(true);
 
-                for (Entity e : playerZone.allEntities) {
+                for (Entity e : playerZone.getAllEntities()) {
                     e.render(Shadows.getCamera()); //ENtity shaders during shadow pass also need to be distorted to apply correctly to shadow map
                 }
                 Shadows.shadowPass = false;
@@ -196,7 +192,7 @@ public abstract class InGameMixin extends GameState {
 //
 //        composite0.unbind();
         if (ShaderPackLoader.shaderPackOn) {
-            if (ShaderPackLoader.shader1.size >=ShaderPackLoader.compositeStartIdx + 1) {
+            if (ShaderPackLoader.shader1.size >ShaderPackLoader.compositeStartIdx ) {
                 for(int i = ShaderPackLoader.compositeStartIdx; i < ShaderPackLoader.shader1.size; i++) {
                     FinalShader composite = (FinalShader)  ShaderPackLoader.shader1.get(i);
                     composite.bind(rawWorldCamera);

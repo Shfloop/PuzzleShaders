@@ -6,56 +6,34 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.github.puzzle.core.PuzzleRegistries;
+
+import com.github.puzzle.core.loader.launch.provider.mod.entrypoint.impls.ClientModInitializer;
 import com.github.puzzle.core.localization.ILanguageFile;
 import com.github.puzzle.core.localization.LanguageManager;
 import com.github.puzzle.core.localization.files.LanguageFileVersion1;
 
 
-import com.github.puzzle.core.resources.PuzzleGameAssetLoader;
+
 import com.github.puzzle.game.events.OnPreLoadAssetsEvent;
 import com.github.puzzle.game.events.OnRegisterBlockEvent;
 
-import com.github.puzzle.loader.entrypoint.interfaces.ModInitializer;
 
 
 import finalforeach.cosmicreach.util.Identifier;
-import org.greenrobot.eventbus.Subscribe;
+
 import org.shfloop.SimplyShadersPuzzle.rendering.RenderFBO;
 
 import java.io.IOException;
 import java.util.Objects;
 
-public class SimplyShaders implements ModInitializer {
+public class SimplyShaders implements ClientModInitializer {
     public static RenderFBO buffer ; //this might be a good way to go about this but im not really sure
     public static Mesh screenQuad = null;
     public static boolean inRender = false;
     @Override
     public void onInit() {
-        PuzzleRegistries.EVENT_BUS.register(this);
-
-
-
     }
 
-    @Subscribe
-    public void onEvent(OnRegisterBlockEvent event) {
-
-    }
-
-
-
-    @Subscribe
-    public void onEvent(OnPreLoadAssetsEvent event) {
-        ILanguageFile lang = null;
-        try {
-            lang = LanguageFileVersion1.loadLanguageFile(
-                    Objects.requireNonNull(PuzzleGameAssetLoader.locateAsset(Identifier.of(Constants.MOD_ID, "languages/en-US.json")))
-            );} catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        LanguageManager.registerLanguageFile(lang);
-    }
     public static void genMesh() {
         float[] verts = new float[20];
         int i = 0;

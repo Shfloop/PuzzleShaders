@@ -7,13 +7,10 @@
     "Shfloop"
   ],
   "meta": {
-    "icon": "assets/example-mod/icons/icon.png"
+    "icon": "${mod_id}:assets/example-mod/icons/icon.png"
   },
   "entrypoints": {
-    "preInit": [
-      "org.shfloop.SimplyShadersPuzzle.ExampleModPreinit"
-    ],
-    "init": [
+    "client_init": [
       "org.shfloop.SimplyShadersPuzzle.SimplyShaders"
     ]
   },
