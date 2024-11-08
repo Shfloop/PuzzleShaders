@@ -1,6 +1,7 @@
 package org.shfloop.SimplyShadersPuzzle.mixins;
 
 import com.badlogic.gdx.math.Vector3;
+import finalforeach.cosmicreach.rendering.shaders.SkyShader;
 import org.shfloop.SimplyShadersPuzzle.DynamicSkyInterface;
 import org.shfloop.SimplyShadersPuzzle.Shadows;
 import finalforeach.cosmicreach.world.DynamicSky;
@@ -20,6 +21,11 @@ public abstract  class DynamicSkyMixin implements DynamicSkyInterface {
         forceUpdate = true;
 
     }
+    @Override
+    public void setCurrentShader() {
+        skyShader = SkyShader.SKY_SHADER;
+    }
+    @Shadow protected SkyShader skyShader;
     public boolean forceUpdate = true;
     @Shadow
     protected Vector3 sunDirection;
