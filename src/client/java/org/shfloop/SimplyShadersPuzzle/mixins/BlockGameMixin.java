@@ -6,6 +6,7 @@ import org.shfloop.SimplyShadersPuzzle.Shadows;
 import org.shfloop.SimplyShadersPuzzle.SimplyShaders;
 import finalforeach.cosmicreach.BlockGame;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,7 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockGame.class)
 
 public abstract class BlockGameMixin {
+    @Unique
     private static float timeSinceResize;
+    @Unique
     private static boolean needsResize;
 
     @Inject(method = "render()V", at = @At(value = "INVOKE", target = "Lfinalforeach/cosmicreach/rendering/shaders/ChunkShader;reloadAllShaders()V"))

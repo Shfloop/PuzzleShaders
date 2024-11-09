@@ -112,6 +112,7 @@ public abstract class InGameMixin extends GameState {
                 GameSingletons.zoneRenderer.render(playerZone, Shadows.getCamera());
 
                 Gdx.gl.glDepthMask(true);
+                Gdx.gl.glEnable(GL20.GL_CULL_FACE);
 
                 for (Entity e : playerZone.getAllEntities()) {
                     e.render(Shadows.getCamera()); //ENtity shaders during shadow pass also need to be distorted to apply correctly to shadow map

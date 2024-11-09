@@ -30,8 +30,8 @@ public class BlockPropertiesIDLoader {
         //TODO the base game ChunkTexBufferis changed during base game aswell look into changin git at shader runtime
         loadProperties("block.properties");
 
-        Constants.LOGGER.info(baseGeneratedBlockIDMap);
-        Constants.LOGGER.info(baseGeneratedBlockIDArray);
+        //Constants.LOGGER.info(baseGeneratedBlockIDMap);
+        //Constants.LOGGER.info(baseGeneratedBlockIDArray);
         float[] items = ChunkShader.faceTexBufFloats.items;
 
         int currentDefaultID = 0;
@@ -40,7 +40,7 @@ public class BlockPropertiesIDLoader {
             //instaed of using the full 32 im just going to use bits in mantissa so 23 and ill use FF for block group and 7FFF for base ID
 
             int temp = (int)items[i] >> 8;
-            Constants.LOGGER.info(baseGeneratedBlockIDArray.get(currentDefaultID) + currentDefaultID + " TEMP " + temp + " I " + i);
+           // Constants.LOGGER.info(baseGeneratedBlockIDArray.get(currentDefaultID) + currentDefaultID + " TEMP " + temp + " I " + i);
             if (temp != currentDefaultID) {
                 currentDefaultID = temp;
                 shaderGroupID = shaderBlockIDMap.getOrDefault(baseGeneratedBlockIDArray.get(currentDefaultID ), 0);
@@ -67,7 +67,8 @@ public class BlockPropertiesIDLoader {
                 }
                 //check if the block is an empty string or just space
                 if (!trimmed.isEmpty()) {
-                    shaderBlockIDMap.put(block, ID);
+                    shaderBlockIDMap.put(trimmed.replace("base:", ""), ID);
+                   // Constants.LOGGER.info("BLOCK ID " + trimmed);
                 }
 
             }

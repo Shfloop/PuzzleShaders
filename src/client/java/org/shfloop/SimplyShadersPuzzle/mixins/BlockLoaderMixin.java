@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientBlockLoader.class)
 public abstract class BlockLoaderMixin {
-    @Inject(method = "registerFinalizers", at = @At(value = "INJECT", target = "Lcom/github/puzzle/game/engine/PuzzleRegistries;store(Lfinalforeach/cosmicreach/util/Identifier;Lcom/github/puzzle/game/engine/block/modelsPuzzleBlockModel;)V"))
+    @Inject(method = "registerFinalizers", at = @At(value = "INVOKE", target = "Lcom/github/puzzle/game/engine/PuzzleRegistries;store(Lfinalforeach/cosmicreach/util/Identifier;Lcom/github/puzzle/game/engine/block/modelsPuzzleBlockModel;)V"))
     private void injectgetblockName(CallbackInfo ci) {
         System.out.println("HELFHWES:LFKHS:ELKF:SLKEF");
     }

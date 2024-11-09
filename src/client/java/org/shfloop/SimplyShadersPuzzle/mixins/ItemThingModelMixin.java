@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 
 
 import com.github.puzzle.game.engine.items.ItemThingModel;
+import com.github.puzzle.game.engine.items.model.IPuzzleItemModel;
 import finalforeach.cosmicreach.items.ItemStack;
 
 import finalforeach.cosmicreach.rendering.items.ItemModel;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ItemThingModel.class)
-public abstract class ItemThingModelMixin extends ItemModel {
+public abstract class ItemThingModelMixin implements IPuzzleItemModel {
 
     @Shadow
     protected static PerspectiveCamera heldItemCamera;

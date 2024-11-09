@@ -41,7 +41,7 @@ public class Shadows {
     static {
         //not sure what viewport size i should be using
         sunCamera =  new OrthographicCamera(256, 256); // should change this to be initialized on the player instead
-        sunCamera.near = -256.0f; //TODO make this a shaderpack variable
+        sunCamera.near = -512.0f; //TODO make this a shaderpack variable
         sunCamera.far = 256.0F;
 
         //calcSunDirection();
