@@ -33,7 +33,7 @@ public abstract class GameShaderMixin   {
 
 
 
-    @Inject(method = "initShaders()V", at = @At("Tail")) // making it head should populate the mods assets with the replacement shaders
+    @Inject(method = "initShaders()V", at = @At("TAIL")) // making it head should populate the mods assets with the replacement shaders
     static private void addShadowPassShaders(CallbackInfo ci) {
         FinalShader.initFinalShader();
         Shadows.BLOCK_ENTITY_SHADER = ChunkShader.DEFAULT_BLOCK_SHADER;
@@ -68,6 +68,11 @@ public abstract class GameShaderMixin   {
     @Shadow
     protected Identifier vertexShaderId;
     @Shadow Identifier fragShaderId;
+
+    @Overwrite
+    public void verifyShaderHasNoBannedKeywords(Identifier shaderId, String shaderText) {
+
+    }
     @Overwrite
     public void reload() {
         GameShader tempThis = ((GameShader) (Object)this); //maybe this works
